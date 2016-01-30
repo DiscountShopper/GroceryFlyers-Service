@@ -48,16 +48,12 @@ public class MongoDatastore {
         collection.insertMany(models.stream().map(x -> x.mapToBusinessModel(null)).collect(Collectors.toList()));
     }
 
-    public Optional<List<Document>> findPublicationIfAvailable(String guid){
+    public Optional<Document> findPublicationIfAvailable(String guid){
         MongoCollection<Document> collection = database.getCollection(PublicationSet.MONGO_DOCUMENT_NAME);
         FindIterable<Document> result = collection.find(eq("publication.identifier", guid));
 
         if(result.iterator().hasNext()){
-            List<Document> publications = new ArrayList<>();
-            while(result.iterator().hasNext()){
-                publications.add(result.iterator().next());
-            }
-            return Optional.of(publications);
+            return Optional.of(result.first());
         }
         return Optional.empty();
     }
