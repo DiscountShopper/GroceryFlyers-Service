@@ -3,8 +3,12 @@ package io.groceryflyers.fetchers.impl;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import io.groceryflyers.fetchers.AbstractFetcher;
+import io.groceryflyers.fetchers.impl.models.EyFlyersPublications;
+import io.groceryflyers.fetchers.impl.models.EyFlyersPublicationsItems;
 import io.groceryflyers.fetchers.impl.models.EyFlyersStores;
 import io.groceryflyers.fetchers.impl.providers.MetroProvider;
+import io.groceryflyers.models.Publication;
+import io.groceryflyers.models.PublicationItem;
 import io.groceryflyers.models.Store;
 
 import java.io.IOException;
@@ -42,6 +46,15 @@ public class EyFlyerFetcher extends AbstractFetcher {
                     "countryCode=CA&" +
                     "postalCode=" + postalCode + "&" +
                     "culture=fr");
+        }
+
+        public String getPublicationItemsByPubGuid(String guid) {
+            return this.getBaseUrl().concat("/fr/" + guid + "/Product/ListAllProducts");
+        }
+
+        public String getPublicationByStoreId(String sguid) {
+            return this.getBaseUrl().concat("/fr/Landing/GetPublicationsByStoreId?" +
+                    "storeId=" + sguid);
         }
 
         public EyFlyerProvider getProvider() { return this.provider; }
@@ -92,5 +105,50 @@ public class EyFlyerFetcher extends AbstractFetcher {
         }
 
         return allStores;
+    }
+
+    @Override
+    public List<PublicationItem> getAllPublicationItems(EyFlyersProviders provider, String pguid) {
+        try {
+            HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
+                    new GenericUrl(provider.getPublicationItemsByPubGuid(pguid))
+            );
+
+            List<EyFlyersPublicationsItems> items = req.execute().parseAs(EyFlyersPublicationsItems.EyFlyersPublicationItemsList.class).products;
+            return items.stream().map( item -> (
+                    (Function<EyFlyersPublicationsItems, PublicationItem>) map -> {
+                        return map.mapToBusinessModel(provider.getProvider());
+                    }).apply(item)
+            ).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Publication> getAllPublicationByStore(EyFlyersProviders provider, String sguid) {
+        try {
+            HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
+                    new GenericUrl(provider.getPublicationByStoreId(sguid))
+            );
+
+            List<EyFlyersPublications> publications =
+                    req.execute().parseAs(EyFlyersPublications.EyFlyersPublicationsList.class).publications;
+            return publications.stream().map( item -> (
+                    (Function<EyFlyersPublications, Publication>) map -> {
+                        return map.mapToBusinessModel(provider.getProvider());
+                    }).apply(item)
+            ).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static void main(String[] args) {
+        EyFlyerFetcher fetcher = new EyFlyerFetcher();
+
+        List<Publication> items = fetcher.getAllPublicationByStore(EyFlyersProviders.METRO, "5bbefd7f-3ebf-463a-8849-bf8c43959d52");
+        System.out.println(items.size());
     }
 }

@@ -5,6 +5,8 @@ import io.groceryflyers.fetchers.AbstractProvider;
 import io.groceryflyers.models.PublicationItem;
 import io.groceryflyers.models.utils.MappableTo;
 
+import java.util.List;
+
 /**
  * Created by jeremiep on 2016-01-30.
  */
@@ -60,7 +62,31 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     @Override
     public PublicationItem mapToBusinessModel(AbstractProvider p) {
         PublicationItem r = new PublicationItem();
-        r.title = this.title;
-        return null;
+        r.title_fr = p.getProductTitleFrench(this.title);
+        r.title_en = p.getProductTitleEnglish(this.title);
+
+        r.description = this.description;
+
+        r.brand_fr = this.brandNameFr;
+        r.brand_en = this.brandName;
+
+        r.category_fr = this.categoryFr;
+        r.category_en = this.category;
+
+        r.link = this.link;
+
+        r.image = this.imageUrl;
+        r.imageThumb = this.imageThumb;
+
+        r.price = this.price;
+        r.price_unit = this.priceUnit;
+        r.keywords = p.getKeywords(this.keywords);
+
+        return r;
+    }
+
+    public static class EyFlyersPublicationItemsList {
+        @Key("Products")
+        public List<EyFlyersPublicationsItems> products;
     }
 }
