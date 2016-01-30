@@ -43,6 +43,10 @@ public class eyFlyerFetcher extends AbstractFetcher {
 
     protected eyFlyersProviders provider;
 
+    public eyFlyerFetcher(eyFlyersProviders provider) {
+        this.provider = provider;
+    }
+
     @Override
     public List<Store> getStoreNearby(String postalCode) {
         try {
