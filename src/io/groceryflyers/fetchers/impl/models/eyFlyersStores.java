@@ -1,12 +1,16 @@
 package io.groceryflyers.fetchers.impl.models;
 
 import com.google.api.client.util.Key;
+import io.groceryflyers.models.Store;
+import io.groceryflyers.models.utils.MappableTo;
 import oracle.jrockit.jfr.StringConstantPool;
+
+import java.util.List;
 
 /**
  * Created by jeremiep on 2016-01-30.
  */
-public class eyFlyersStores {
+public class eyFlyersStores implements MappableTo<Store> {
     @Key("BannerCode")
     private String bannerCode;
 
@@ -31,9 +35,32 @@ public class eyFlyersStores {
     @Key("Region")
     private String region;
 
+    @Key("Country")
+    private String country;
+
     @Key("RegionCode")
     private String regionCode;
 
     @Key("PCZip")
     private String postalCode;
+
+    @Override
+    public Store mapToBusinessModel() {
+        Store s = new Store();
+        s.banner = this.bannerCode;
+        s.guid = this.storeGuid;
+        s.address = this.address1 + this.address2;
+        s.city = this.city;
+        s.region = this.region;
+        s.region_code = this.regionCode;
+        s.country = this.country;
+        s.postal_code = this.postalCode;
+
+        return s;
+    }
+
+    public static class eyFlyersStoresList {
+        @Key("Stores")
+        public List<eyFlyersStores> storeList;
+    }
 }

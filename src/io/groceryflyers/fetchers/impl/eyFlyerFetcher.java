@@ -3,15 +3,18 @@ package io.groceryflyers.fetchers.impl;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import io.groceryflyers.fetchers.AbstractFetcher;
+import io.groceryflyers.fetchers.impl.models.eyFlyersStores;
 import io.groceryflyers.models.Store;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by jeremiep on 2016-01-30.
  */
-public abstract class eyFlyerFetcher extends AbstractFetcher {
+public class eyFlyerFetcher extends AbstractFetcher {
     public enum eyFlyersProviders {
         SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC"),
         MAXI("http://eflyer.metro.ca/MAXI/MAXI"),
@@ -46,9 +49,22 @@ public abstract class eyFlyerFetcher extends AbstractFetcher {
             HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
                     new GenericUrl(this.provider.getStoresNearbyPostalCodeUrl(postalCode))
             );
+
+            List<eyFlyersStores> stores = req.execute().parseAs(eyFlyersStores.eyFlyersStoresList.class).storeList;
+            return stores.stream().map(
+                    ((Function<eyFlyersStores, Store>) eyFlyersStores::mapToBusinessModel)::apply
+            ).collect(Collectors.toList());
+
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return null;
+    }
+
+    public static void main(String[] args) {
+        eyFlyerFetcher test = new eyFlyerFetcher();
+        test.provider = eyFlyersProviders.METRO;
+        List<Store> stores = test.getStoreNearby("G6P 8Y8");
+
+        System.out.println(stores.size());
     }
 }

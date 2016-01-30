@@ -7,27 +7,28 @@ import com.google.gson.annotations.SerializedName;
  * Created by jeremiep on 2016-01-30.
  */
 public class Store {
+    /* TODO : put these attr private ... lazy */
     @SerializedName("banner_code")
-    protected BannerTypes banner;
+    public String banner;
 
     @SerializedName("guid")
-    protected String guid;
+    public String guid;
 
     @SerializedName("address")
-    protected String address;
+    public String address;
 
     @SerializedName("city")
-    protected String city;
+    public String city;
 
     @SerializedName("region")
-    protected String region;
+    public String region;
 
     @SerializedName("region_code")
-    protected String region_code;
+    public String region_code;
 
     @SerializedName("country")
-    protected String country;
+    public String country;
 
     @SerializedName("postal_code")
-    protected String postal_code;
+    public String postal_code;
 }
