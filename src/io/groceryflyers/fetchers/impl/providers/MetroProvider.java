@@ -7,4 +7,13 @@ import io.groceryflyers.fetchers.impl.EyFlyerProvider;
  */
 public class MetroProvider extends EyFlyerProvider {
 
+    @Override
+    public String getProductTitleFrench() {
+        return null;
+    }
+
+    @Override
+    public String getProductTitleEnglish() {
+        return null;
+    }
 }

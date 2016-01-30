@@ -44,6 +44,9 @@ public class EyFlyersStores implements MappableTo<Store> {
     @Key("PCZip")
     private String postalCode;
 
+    @Key("Distance")
+    private float distance;
+
     @Override
     public Store mapToBusinessModel(AbstractProvider p) {
         Store s = new Store();
@@ -56,6 +59,7 @@ public class EyFlyersStores implements MappableTo<Store> {
         s.region_code = this.regionCode;
         s.country = this.country;
         s.postal_code = this.postalCode;
+        s.distance = this.distance;
 
         return s;
     }
