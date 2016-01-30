@@ -1,8 +1,32 @@
 package io.groceryflyers.fetchers;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.apache.ApacheHttpTransport;
+import com.google.api.client.json.JsonObjectParser;
+import com.google.api.client.json.gson.GsonFactory;
+import io.groceryflyers.models.Store;
+
+import java.io.IOException;
+import java.util.List;
+
 /**
  * Created by jeremiep on 2016-01-30.
  */
 public abstract class AbstractFetcher {
+    public abstract List<Store> getStoreNearby(String postalCode);
 
+    protected HttpRequestFactory getDefaultHttpFactory() {
+        return new ApacheHttpTransport().createRequestFactory(new HttpRequestInitializer() {
+            @Override
+            public void initialize(HttpRequest httpRequest) throws IOException {
+                httpRequest.setParser(new JsonObjectParser((AbstractFetcher.this).getDefaultJSONFactory()));
+            }
+        });
+    }
+
+    private GsonFactory getDefaultJSONFactory() {
+        return new GsonFactory();
+    }
 }
