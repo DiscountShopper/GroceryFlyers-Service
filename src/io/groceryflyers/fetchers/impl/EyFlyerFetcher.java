@@ -89,6 +89,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
     @Override
     public List<Store> getStoreNearby(EyFlyersProviders provider, String postalCode) {
         try {
+            LOG.info(provider.getStoresNearbyPostalCodeUrl(postalCode));
             HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
                     new GenericUrl(provider.getStoresNearbyPostalCodeUrl(postalCode))
             );
@@ -119,6 +120,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
     @Override
     public List<PublicationItem> getAllPublicationItems(EyFlyersProviders provider, String pguid) {
         try {
+            LOG.info(provider.getPublicationItemsByPubGuid(pguid));
             HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
                     new GenericUrl(provider.getPublicationItemsByPubGuid(pguid))
             );
@@ -137,6 +139,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
     @Override
     public List<Publication> getAllPublicationByStore(EyFlyersProviders provider, String sguid) {
         try {
+            LOG.info(provider.getPublicationByStoreId(sguid));
             HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
                     new GenericUrl(provider.getPublicationByStoreId(sguid))
             );
@@ -179,7 +182,9 @@ public class EyFlyerFetcher extends AbstractFetcher {
     public static void main(String[] args) {
         EyFlyerFetcher fetcher = new EyFlyerFetcher();
 
-        List<PublicationSet> items = fetcher.getAllPublicationSetsByStore(EyFlyersProviders.METRO, "5bbefd7f-3ebf-463a-8849-bf8c43959d52");
-        System.out.println(items.size());
+        List<PublicationSet> set = fetcher.getAllPublicationSetsByStore(
+                EyFlyerFetcher.EyFlyersProviders.getProviderFromString("LOBLAWS"),
+                "000d5f93-434b-49ea-8d0e-9678e45fbab8");
+        System.out.println(set.size());
     }
 }

@@ -13,6 +13,7 @@ import static spark.Spark.*;
 public class Main {
     private final static int PORT = 1337;
     private final static Pattern POSTAL_CODE_PATTERN = Pattern.compile("[a-zA-Z][0-9][a-zA-Z][0-9][a-zA-Z][0-9]");
+    private final static Pattern GUID_CODE_PATTERN = Pattern.compile("^[0-9a-z]{8}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{12}$");
 
     public static void main(String[] args) {
 
@@ -70,6 +71,7 @@ public class Main {
             boolean validParameters = true;
 
             validParameters = EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")) != null;
+            validParameters = GUID_CODE_PATTERN.matcher(request.params(":guid")).matches();
 
             if (!validParameters) {
                 halt(400, "Invalid parameters");
