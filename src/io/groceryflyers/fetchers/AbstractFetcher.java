@@ -17,6 +17,7 @@ import java.util.List;
  */
 public abstract class AbstractFetcher {
     public abstract List<Store> getStoreNearby(EyFlyerFetcher.EyFlyersProviders provider, String postalCode);
+    public abstract List<Store> getAllStoreNearby(String postalCode);
 
     protected HttpRequestFactory getDefaultHttpFactory() {
         return new ApacheHttpTransport().createRequestFactory(new HttpRequestInitializer() {

@@ -17,7 +17,7 @@ public class Main {
 
         port(PORT);
 
-        before("/api/:bannerCode/:postalCode", (request, response) -> {
+        before("/api/stores/:bannerCode/:postalCode", (request, response) -> {
             boolean validParameters = true;
 
             validParameters = POSTAL_CODE_PATTERN.matcher(request.params(":postalCode")).matches();
@@ -27,9 +27,22 @@ public class Main {
                 halt(400, "Invalid parameters");
             }
         });
-        get("/api/:bannerCode/:postalCode", (req, res) ->  {
-            EyFlyerFetcher fetcher = new EyFlyerFetcher(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")));
-            return fetcher.getStoreNearby(req.params(":postalCode"));
+        get("/api/stores/:bannerCode/:postalCode", (req, res) ->  {
+            return new EyFlyerFetcher()
+                    .getStoreNearby(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")), req.params(":postalCode"));
+        }, new JsonTransformer());
+
+        before("/api/stores/:postalCode", (request, response) -> {
+            boolean validParameters = true;
+
+            validParameters = POSTAL_CODE_PATTERN.matcher(request.params(":postalCode")).matches();
+
+            if (!validParameters) {
+                halt(400, "Invalid parameters");
+            }
+        });
+        get("/api/stores/:postalCode", (req, res) ->  {
+            return new EyFlyerFetcher().getAllStoreNearby(req.params(":postalCode"));
         }, new JsonTransformer());
 
         get("/api/publications/:store", (req, res) ->  {

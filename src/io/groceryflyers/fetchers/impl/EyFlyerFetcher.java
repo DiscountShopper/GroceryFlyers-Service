@@ -8,6 +8,7 @@ import io.groceryflyers.fetchers.impl.providers.MetroProvider;
 import io.groceryflyers.models.Store;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -80,5 +81,16 @@ public class EyFlyerFetcher extends AbstractFetcher {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<Store> getAllStoreNearby(String postalCode) {
+        List<Store> allStores = new ArrayList<>();
+
+        for(EyFlyersProviders provider: EyFlyersProviders.values()){
+            allStores.addAll(getStoreNearby(provider, postalCode));
+        }
+
+        return allStores;
     }
 }
