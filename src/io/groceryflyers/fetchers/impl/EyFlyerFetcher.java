@@ -6,7 +6,7 @@ import io.groceryflyers.fetchers.AbstractFetcher;
 import io.groceryflyers.fetchers.impl.models.EyFlyersPublications;
 import io.groceryflyers.fetchers.impl.models.EyFlyersPublicationsItems;
 import io.groceryflyers.fetchers.impl.models.EyFlyersStores;
-import io.groceryflyers.fetchers.impl.providers.MetroProvider;
+import io.groceryflyers.fetchers.impl.providers.*;
 import io.groceryflyers.models.Publication;
 import io.groceryflyers.models.PublicationItem;
 import io.groceryflyers.models.PublicationSet;
@@ -24,11 +24,11 @@ import java.util.stream.Collectors;
  */
 public class EyFlyerFetcher extends AbstractFetcher {
     public enum EyFlyersProviders {
-        SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC", null),
-        MAXI("http://eflyer.metro.ca/MAXI/MAXI", null),
-        IGA("http://eflyer.metro.ca/IGA/IGA", null),
+        SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC", new SuperCProvider()),
+        MAXI("http://eflyer.metro.ca/MAXI/MAXI", new MaxiProvider()),
+        IGA("http://eflyer.metro.ca/IGA/IGA", new IGAProvider()),
         METRO("http://eflyer.metro.ca/MTR/MTR", new MetroProvider()),
-        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", null);
+        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", new LoblawsProvider());
 
         private String base_url;
         private EyFlyerProvider provider;
