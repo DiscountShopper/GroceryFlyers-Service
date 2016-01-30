@@ -7,10 +7,7 @@ import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
 import io.groceryflyers.fetchers.impl.EyFlyerFetcher;
-import io.groceryflyers.models.Publication;
-import io.groceryflyers.models.PublicationItem;
-import io.groceryflyers.models.PublicationSet;
-import io.groceryflyers.models.Store;
+import io.groceryflyers.models.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +23,7 @@ public abstract class AbstractFetcher {
     public abstract List<Publication> getAllPublicationByStore(EyFlyerFetcher.EyFlyersProviders provider, String sguid);
 
     public abstract List<PublicationSet> getAllPublicationSetsByStore(EyFlyerFetcher.EyFlyersProviders provider, String sguid);
+    public abstract List<Category> getAllCategoriesByPublication(EyFlyerFetcher.EyFlyersProviders provider, String pguid);
 
     protected HttpRequestFactory getDefaultHttpFactory() {
         return new ApacheHttpTransport().createRequestFactory(new HttpRequestInitializer() {

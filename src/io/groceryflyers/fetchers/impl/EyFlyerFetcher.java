@@ -3,25 +3,22 @@ package io.groceryflyers.fetchers.impl;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.mongodb.Mongo;
 import io.groceryflyers.datastore.MongoDatastore;
 import io.groceryflyers.fetchers.AbstractFetcher;
+import io.groceryflyers.fetchers.impl.models.EyFlyersCategories;
 import io.groceryflyers.fetchers.impl.models.EyFlyersPublications;
 import io.groceryflyers.fetchers.impl.models.EyFlyersPublicationsItems;
 import io.groceryflyers.fetchers.impl.models.EyFlyersStores;
 import io.groceryflyers.fetchers.impl.providers.*;
-import io.groceryflyers.models.Publication;
-import io.groceryflyers.models.PublicationItem;
-import io.groceryflyers.models.PublicationSet;
-import io.groceryflyers.models.Store;
+import io.groceryflyers.models.*;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Type;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -64,6 +61,10 @@ public class EyFlyerFetcher extends AbstractFetcher {
         public String getPublicationByStoreId(String sguid) {
             return this.getBaseUrl().concat("/fr/Landing/GetPublicationsByStoreId?" +
                     "storeId=" + sguid);
+        }
+
+        public String getCategoriesByPublication(String pguid) {
+            return this.getBaseUrl().concat("/fr/" + pguid + "/Publication/Categories");
         }
 
         public EyFlyerProvider getProvider() { return this.provider; }
@@ -179,12 +180,28 @@ public class EyFlyerFetcher extends AbstractFetcher {
         return pset;
     }
 
+    public List<Category> getAllCategoriesByPublication(EyFlyersProviders provider, String pguid) {
+        try {
+            HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
+                    new GenericUrl(provider.getCategoriesByPublication(pguid))
+            );
+
+            EyFlyersCategories[] categories = req.execute().parseAs(EyFlyersCategories[].class);
+
+            return Arrays.asList(categories).stream().map(item -> (
+                    (Function<EyFlyersCategories, Category>) map -> {
+                        return map.mapToBusinessModel(provider.getProvider());
+                    }).apply(item)
+            ).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void main(String[] args) {
         EyFlyerFetcher fetcher = new EyFlyerFetcher();
 
-        List<PublicationSet> set = fetcher.getAllPublicationSetsByStore(
-                EyFlyerFetcher.EyFlyersProviders.getProviderFromString("LOBLAWS"),
-                "000d5f93-434b-49ea-8d0e-9678e45fbab8");
-        System.out.println(set.size());
+        List<Category> items = fetcher.getAllCategoriesByPublication(EyFlyersProviders.SUPER_C, "232b2f18-5c44-4be2-8a51-2002f6a96856");
+        System.out.println(items.size());
     }
 }
