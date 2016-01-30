@@ -83,5 +83,27 @@ public class Main {
                             EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")),
                             request.params("guid"));
         }, new JsonTransformer());
+
+        /*
+        *
+        *  GET CATEGORIES OF A CERTAIN PUBLICATION
+        *
+        */
+        before("/api/categories/:bannerCode/:pguid", (request, response) -> {
+            boolean validParameters = true;
+
+            validParameters = EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")) != null;
+            validParameters = GUID_CODE_PATTERN.matcher(request.params(":pguid")).matches();
+
+            if (!validParameters) {
+                halt(400, "Invalid parameters");
+            }
+        });
+        get("/api/categories/:pguid", (request, response) ->  {
+            return new EyFlyerFetcher()
+                    .getAllPublicationSetsByStore(
+                            EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")),
+                            request.params("pguid"));
+        }, new JsonTransformer());
     }
 }
