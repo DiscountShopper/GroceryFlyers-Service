@@ -37,6 +37,17 @@ idea {
     }
 }
 
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'GroceryFliers Service',
+                'Implementation-Version': version,
+                'Main-Class': 'io.groceryflyers.service.Main'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
 repositories {
     mavenCentral()
 }
