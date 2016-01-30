@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * Created by jeremiep on 2016-01-30.
  */
 public class EyFlyerFetcher extends AbstractFetcher {
-    public enum eyFlyersProviders {
+    public enum EyFlyersProviders {
         SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC"),
         MAXI("http://eflyer.metro.ca/MAXI/MAXI"),
         IGA("http://eflyer.metro.ca/IGA/IGA"),
@@ -23,7 +23,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
         LOBLAWS("http://eflyer.metro.ca/LOB/LOB");
 
         private String base_url;
-        eyFlyersProviders(String base_url) {
+        EyFlyersProviders(String base_url) {
             this.base_url = base_url;
         }
 
@@ -40,7 +40,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
                     "culture=fr");
         }
 
-        public static eyFlyersProviders getProviderFromString(String provider) {
+        public static EyFlyersProviders getProviderFromString(String provider) {
             switch(provider){
                 case "SUPERC":
                     return SUPER_C;
@@ -58,17 +58,11 @@ public class EyFlyerFetcher extends AbstractFetcher {
         }
     };
 
-    protected eyFlyersProviders provider;
-
-    public EyFlyerFetcher(eyFlyersProviders provider) {
-        this.provider = provider;
-    }
-
     @Override
-    public List<Store> getStoreNearby(String postalCode) {
+    public List<Store> getStoreNearby(EyFlyersProviders provider, String postalCode) {
         try {
             HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
-                    new GenericUrl(this.provider.getStoresNearbyPostalCodeUrl(postalCode))
+                    new GenericUrl(provider.getStoresNearbyPostalCodeUrl(postalCode))
             );
 
             List<EyFlyersStores> stores = req.execute().parseAs(EyFlyersStores.eyFlyersStoresList.class).storeList;

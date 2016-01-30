@@ -21,14 +21,14 @@ public class Main {
             boolean validParameters = true;
 
             validParameters = POSTAL_CODE_PATTERN.matcher(request.params(":postalCode")).matches();
-            validParameters = EyFlyerFetcher.eyFlyersProviders.getProviderFromString(request.params(":bannerCode")) != null;
+            validParameters = EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")) != null;
 
             if (!validParameters) {
                 halt(400, "Invalid parameters");
             }
         });
         get("/api/:bannerCode/:postalCode", (req, res) ->  {
-            EyFlyerFetcher fetcher = new EyFlyerFetcher(EyFlyerFetcher.eyFlyersProviders.getProviderFromString(req.params(":bannerCode")));
+            EyFlyerFetcher fetcher = new EyFlyerFetcher(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")));
             return fetcher.getStoreNearby(req.params(":postalCode"));
         }, new JsonTransformer());
 
