@@ -1,14 +1,14 @@
 package io.groceryflyers.models;
 
 import com.google.gson.annotations.SerializedName;
-import com.mongodb.BasicDBObject;
 import io.groceryflyers.fetchers.AbstractProvider;
 import io.groceryflyers.models.utils.MappableTo;
+import org.bson.Document;
 
 /**
  * Created by jeremiep on 2016-01-30.
  */
-public class Publication implements MappableTo<BasicDBObject> {
+public class Publication implements MappableTo<Document> {
     @SerializedName("identifier")
     public String id;
 
@@ -22,9 +22,9 @@ public class Publication implements MappableTo<BasicDBObject> {
     public String thumbnail;
 
     @Override
-    public BasicDBObject mapToBusinessModel(AbstractProvider p) {
+    public Document mapToBusinessModel(AbstractProvider p) {
 
-        BasicDBObject dbObject = new BasicDBObject();
+        Document dbObject = new Document();
         dbObject.put("identifier", this.id);
         dbObject.put("date", this.date);
         dbObject.put("title", this.title);

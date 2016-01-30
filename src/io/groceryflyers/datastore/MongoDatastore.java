@@ -1,8 +1,10 @@
 package io.groceryflyers.datastore;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.Mongo;
+import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import io.groceryflyers.models.utils.MappableTo;
+import org.bson.Document;
 
 /**
  * Created by olivier on 2016-01-30.
@@ -17,11 +19,17 @@ public class MongoDatastore {
         return instance;
     }
 
-    private MongoDatastore(){
+    private MongoClient mongo;
+    private MongoDatabase database;
 
+    private MongoDatastore(){
+        this.mongo = new MongoClient(new MongoClientURI(""));
+        this.database = mongo.getDatabase("epicerie");
     }
 
-    private void storeModel(String collection, MappableTo<BasicDBObject> model){
+    public void storeModel(String collectionName, MappableTo<Document> model){
+        MongoCollection<Document> collection = database.getCollection(collectionName);
 
+        collection.insertOne(model.mapToBusinessModel(null));
     }
 }
