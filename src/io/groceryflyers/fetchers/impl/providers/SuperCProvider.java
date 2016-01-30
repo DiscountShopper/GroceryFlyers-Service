@@ -17,7 +17,7 @@ public class SuperCProvider extends EyFlyerProvider {
     public String getProductTitleFrench(String title) {
         Matcher match = PRODUCT_TITLE_PATT.matcher(title);
         if(match.matches()) {
-            return match.group(2);
+            return match.group(1);
         } else {
             return title;
         }
@@ -27,7 +27,7 @@ public class SuperCProvider extends EyFlyerProvider {
     public String getProductTitleEnglish(String title) {
         Matcher match = PRODUCT_TITLE_PATT.matcher(title);
         if(match.matches()) {
-            return match.group(3);
+            return match.group(1);
         } else {
             return title;
         }
