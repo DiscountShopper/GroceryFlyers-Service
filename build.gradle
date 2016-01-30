@@ -5,7 +5,37 @@ apply plugin: 'java'
 apply plugin: 'idea'
 
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.8
+
+configurations {
+    provided
+    provided.extendsFrom(compile)
+}
+
+idea {
+    module {
+        //if for some reason you want to add an extra sourceDirs
+        sourceDirs += file('src')
+
+        //if you don't like the name Gradle has chosen
+        name = 'groceryflyers'
+
+        //if you prefer different output folders
+        inheritOutputDirs = false
+
+        //if you prefer different SDK than that inherited from IDEA project
+        jdkName = '1.8'
+
+        //if you need to put 'provided' dependencies on the classpath
+        scopes.PROVIDED.plus += [ configurations.provided ]
+
+        //if you love browsing Javadoc
+        downloadJavadoc = true
+
+        //and hate reading sources :)
+        downloadSources = false
+    }
+}
 
 repositories {
     mavenCentral()
