@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
  * Created by jeremiep on 2016-01-30.
  */
 public class PublicationSet implements MappableTo<Document> {
+
+    public static String MONGO_DOCUMENT_NAME = "publication_set";
+
     @SerializedName("publication")
     public Publication publication;
 
