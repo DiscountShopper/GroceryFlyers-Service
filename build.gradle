@@ -38,16 +38,15 @@ idea {
     }
 }
 
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'GroceryFliers Service',
-                'Implementation-Version': version,
-                'MainProgram-Class': 'io.groceryflyers.service.MainProgram'
+task C28Deploy << {
+    File zipDist = file('build/distributions/' + rootProject.name + "-" + version + ".zip")
+    copy {
+        from zipTree(zipDist.absolutePath)
+        into './exec/'
     }
-    baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
 }
+
+C28Deploy.dependsOn tasks.findByName('assemble')
 
 repositories {
     mavenCentral()
