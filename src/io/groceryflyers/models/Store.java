@@ -8,6 +8,9 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Store {
     /* TODO : put these attr private ... lazy */
+    @SerializedName("name")
+    public String name;
+
     @SerializedName("banner_code")
     public String banner;
 

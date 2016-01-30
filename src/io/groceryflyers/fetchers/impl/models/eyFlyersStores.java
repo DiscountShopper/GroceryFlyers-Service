@@ -3,14 +3,13 @@ package io.groceryflyers.fetchers.impl.models;
 import com.google.api.client.util.Key;
 import io.groceryflyers.models.Store;
 import io.groceryflyers.models.utils.MappableTo;
-import oracle.jrockit.jfr.StringConstantPool;
 
 import java.util.List;
 
 /**
  * Created by jeremiep on 2016-01-30.
  */
-public class eyFlyersStores implements MappableTo<Store> {
+public class EyFlyersStores implements MappableTo<Store> {
     @Key("BannerCode")
     private String bannerCode;
 
@@ -47,6 +46,7 @@ public class eyFlyersStores implements MappableTo<Store> {
     @Override
     public Store mapToBusinessModel() {
         Store s = new Store();
+        s.name = this.name;
         s.banner = this.bannerCode;
         s.guid = this.storeGuid;
         s.address = this.address1 + this.address2;
@@ -61,6 +61,6 @@ public class eyFlyersStores implements MappableTo<Store> {
 
     public static class eyFlyersStoresList {
         @Key("Stores")
-        public List<eyFlyersStores> storeList;
+        public List<EyFlyersStores> storeList;
     }
 }

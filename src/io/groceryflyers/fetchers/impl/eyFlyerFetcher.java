@@ -3,7 +3,7 @@ package io.groceryflyers.fetchers.impl;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import io.groceryflyers.fetchers.AbstractFetcher;
-import io.groceryflyers.fetchers.impl.models.eyFlyersStores;
+import io.groceryflyers.fetchers.impl.models.EyFlyersStores;
 import io.groceryflyers.models.Store;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Created by jeremiep on 2016-01-30.
  */
-public class eyFlyerFetcher extends AbstractFetcher {
+public class EyFlyerFetcher extends AbstractFetcher {
     public enum eyFlyersProviders {
         SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC"),
         MAXI("http://eflyer.metro.ca/MAXI/MAXI"),
@@ -60,7 +60,7 @@ public class eyFlyerFetcher extends AbstractFetcher {
 
     protected eyFlyersProviders provider;
 
-    public eyFlyerFetcher(eyFlyersProviders provider) {
+    public EyFlyerFetcher(eyFlyersProviders provider) {
         this.provider = provider;
     }
 
@@ -71,9 +71,9 @@ public class eyFlyerFetcher extends AbstractFetcher {
                     new GenericUrl(this.provider.getStoresNearbyPostalCodeUrl(postalCode))
             );
 
-            List<eyFlyersStores> stores = req.execute().parseAs(eyFlyersStores.eyFlyersStoresList.class).storeList;
+            List<EyFlyersStores> stores = req.execute().parseAs(EyFlyersStores.eyFlyersStoresList.class).storeList;
             return stores.stream().map(
-                    ((Function<eyFlyersStores, Store>) eyFlyersStores::mapToBusinessModel)::apply
+                    ((Function<EyFlyersStores, Store>) EyFlyersStores::mapToBusinessModel)::apply
             ).collect(Collectors.toList());
 
         } catch (IOException e) {
