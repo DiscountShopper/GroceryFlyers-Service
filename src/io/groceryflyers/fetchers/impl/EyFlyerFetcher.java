@@ -2,6 +2,9 @@ package io.groceryflyers.fetchers.impl;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
+import com.google.gson.GsonBuilder;
+import com.mongodb.Mongo;
+import io.groceryflyers.datastore.MongoDatastore;
 import io.groceryflyers.fetchers.AbstractFetcher;
 import io.groceryflyers.fetchers.impl.models.EyFlyersPublications;
 import io.groceryflyers.fetchers.impl.models.EyFlyersPublicationsItems;
@@ -11,11 +14,13 @@ import io.groceryflyers.models.Publication;
 import io.groceryflyers.models.PublicationItem;
 import io.groceryflyers.models.PublicationSet;
 import io.groceryflyers.models.Store;
+import org.bson.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -150,9 +155,18 @@ public class EyFlyerFetcher extends AbstractFetcher {
     public List<PublicationSet> getAllPublicationSetsByStore(EyFlyersProviders provider, String sguid) {
         LinkedList<PublicationSet> pset = new LinkedList<PublicationSet>();
         for(Publication pub : this.getAllPublicationByStore(provider, sguid)) {
+            Optional<Document> existingPub = MongoDatastore.getInstance().findPublicationIfAvailable(pub.id);
+            if(existingPub.isPresent()) {
+                PublicationSet existingSet = new GsonBuilder().create().fromJson(existingPub.get().toJson(), PublicationSet.class);
+                pset.add(existingSet);
+                continue;
+            }
+
             PublicationSet set = new PublicationSet();
             set.publication = pub;
             set.items = this.getAllPublicationItems(provider, pub.id);
+
+            MongoDatastore.getInstance().storeModel(PublicationSet.MONGO_DOCUMENT_NAME, set);
             pset.add(set);
         }
 
