@@ -180,6 +180,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
         return pset;
     }
 
+    @Override
     public List<Category> getAllCategoriesByPublication(EyFlyersProviders provider, String pguid) {
         try {
             HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
@@ -197,6 +198,13 @@ public class EyFlyerFetcher extends AbstractFetcher {
             throw new RuntimeException(e);
         }
     }
+
+    /*public List<PublicationSet> getAllPublicationSetsForAllStores(String postcalCode) {
+        List<PublicationSet> sets = new LinkedList<PublicationSet>();
+        for(EyFlyersProviders provider : EyFlyersProviders.values()) {
+
+        }
+    }*/
 
     public static void main(String[] args) {
         EyFlyerFetcher fetcher = new EyFlyerFetcher();

@@ -3,9 +3,12 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin:'application'
 
 
 sourceCompatibility = 1.8
+
+mainClassName = "io.groceryflyers.service.Main"
 
 configurations {
     provided
