@@ -9,6 +9,7 @@ apply plugin:'application'
 sourceCompatibility = 1.8
 
 mainClassName = "io.groceryflyers.service.MainProgram"
+sourceSets.main.java.srcDirs = ['src']
 
 configurations {
     provided
