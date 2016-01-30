@@ -1,6 +1,6 @@
 package io.groceryflyers.fetchers.impl.models;
 
-/import com.google.api.client.util.Key;
+import com.google.api.client.util.Key;
 
 /**
  * Created by jeremiep on 2016-01-30.

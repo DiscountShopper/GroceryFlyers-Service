@@ -1,6 +1,7 @@
 package io.groceryflyers.fetchers.impl.models;
 
 import com.google.api.client.util.Key;
+import io.groceryflyers.fetchers.AbstractProvider;
 import io.groceryflyers.models.Store;
 import io.groceryflyers.models.utils.MappableTo;
 
@@ -44,7 +45,7 @@ public class EyFlyersStores implements MappableTo<Store> {
     private String postalCode;
 
     @Override
-    public Store mapToBusinessModel() {
+    public Store mapToBusinessModel(AbstractProvider p) {
         Store s = new Store();
         s.name = this.name;
         s.banner = this.bannerCode;

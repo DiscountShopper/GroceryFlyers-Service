@@ -1,6 +1,7 @@
 package io.groceryflyers.fetchers.impl.models;
 
 import com.google.api.client.util.Key;
+import io.groceryflyers.fetchers.AbstractProvider;
 import io.groceryflyers.models.PublicationItem;
 import io.groceryflyers.models.utils.MappableTo;
 
@@ -57,9 +58,9 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     private String keywords;
 
     @Override
-    public PublicationItem mapToBusinessModel() {
-        PublicationItem p = new PublicationItem();
-        //p.title = th
+    public PublicationItem mapToBusinessModel(AbstractProvider p) {
+        PublicationItem r = new PublicationItem();
+        r.title = this.title;
         return null;
     }
 }

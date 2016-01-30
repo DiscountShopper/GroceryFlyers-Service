@@ -4,6 +4,7 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import io.groceryflyers.fetchers.AbstractFetcher;
 import io.groceryflyers.fetchers.impl.models.EyFlyersStores;
+import io.groceryflyers.fetchers.impl.providers.MetroProvider;
 import io.groceryflyers.models.Store;
 
 import java.io.IOException;
@@ -16,15 +17,17 @@ import java.util.stream.Collectors;
  */
 public class EyFlyerFetcher extends AbstractFetcher {
     public enum EyFlyersProviders {
-        SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC"),
-        MAXI("http://eflyer.metro.ca/MAXI/MAXI"),
-        IGA("http://eflyer.metro.ca/IGA/IGA"),
-        METRO("http://eflyer.metro.ca/MTR/MTR"),
-        LOBLAWS("http://eflyer.metro.ca/LOB/LOB");
+        SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC", null),
+        MAXI("http://eflyer.metro.ca/MAXI/MAXI", null),
+        IGA("http://eflyer.metro.ca/IGA/IGA", null),
+        METRO("http://eflyer.metro.ca/MTR/MTR", new MetroProvider()),
+        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", null);
 
         private String base_url;
-        EyFlyersProviders(String base_url) {
+        private EyFlyerProvider provider;
+        EyFlyersProviders(String base_url, EyFlyerProvider provider) {
             this.base_url = base_url;
+            this.provider = provider;
         }
 
         public String getBaseUrl() {
@@ -39,6 +42,8 @@ public class EyFlyerFetcher extends AbstractFetcher {
                     "postalCode=" + postalCode + "&" +
                     "culture=fr");
         }
+
+        public EyFlyerProvider getProvider() { return this.provider; }
 
         public static EyFlyersProviders getProviderFromString(String provider) {
             switch(provider){
@@ -66,8 +71,10 @@ public class EyFlyerFetcher extends AbstractFetcher {
             );
 
             List<EyFlyersStores> stores = req.execute().parseAs(EyFlyersStores.eyFlyersStoresList.class).storeList;
-            return stores.stream().map(
-                    ((Function<EyFlyersStores, Store>) EyFlyersStores::mapToBusinessModel)::apply
+            return stores.stream().map( item -> (
+                    (Function<EyFlyersStores, Store>) map -> {
+                        return map.mapToBusinessModel(provider.getProvider());
+                    }).apply(item)
             ).collect(Collectors.toList());
 
         } catch (IOException e) {
