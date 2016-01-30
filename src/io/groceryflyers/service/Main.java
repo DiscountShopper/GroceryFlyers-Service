@@ -1,5 +1,7 @@
 package io.groceryflyers.service;
 
+import io.groceryflyers.fetchers.impl.eyFlyerFetcher;
+
 import java.util.regex.Pattern;
 
 import static spark.Spark.*;
@@ -19,15 +21,15 @@ public class Main {
             boolean validParameters = true;
 
             validParameters = POSTAL_CODE_PATTERN.matcher(request.params(":postalCode")).matches();
+            validParameters = eyFlyerFetcher.eyFlyersProviders.getProviderFromString(request.params(":bannerCode")) != null;
 
             if (!validParameters) {
-                halt(400, "Invalid postal code");
+                halt(400, "Invalid parameters");
             }
         });
         get("/api/:bannerCode/:postalCode", (req, res) ->  {
-            //TODO: Get the latest stuff from je
-            return new Object();
-
+            eyFlyerFetcher fetcher = new eyFlyerFetcher(eyFlyerFetcher.eyFlyersProviders.getProviderFromString(req.params(":bannerCode")));
+            return fetcher.getStoreNearby(req.params(":postalCode"));
         }, new JsonTransformer());
 
         get("/api/publications/:store", (req, res) ->  {

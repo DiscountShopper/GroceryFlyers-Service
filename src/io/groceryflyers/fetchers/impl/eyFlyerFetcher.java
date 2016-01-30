@@ -39,6 +39,23 @@ public class eyFlyerFetcher extends AbstractFetcher {
                     "postalCode=" + postalCode + "&" +
                     "culture=fr");
         }
+
+        public static eyFlyersProviders getProviderFromString(String provider) {
+            switch(provider){
+                case "SUPERC":
+                    return SUPER_C;
+                case "MAXI":
+                    return MAXI;
+                case "IGA":
+                    return IGA;
+                case "METRO":
+                    return METRO;
+                case "LOBLAWS":
+                    return LOBLAWS;
+                default:
+                    return null;
+            }
+        }
     };
 
     protected eyFlyersProviders provider;
@@ -62,13 +79,5 @@ public class eyFlyerFetcher extends AbstractFetcher {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static void main(String[] args) {
-        eyFlyerFetcher test = new eyFlyerFetcher();
-        test.provider = eyFlyersProviders.METRO;
-        List<Store> stores = test.getStoreNearby("G6P 8Y8");
-
-        System.out.println(stores.size());
     }
 }
