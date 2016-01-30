@@ -1,5 +1,6 @@
 package io.groceryflyers.service;
 
+import io.groceryflyers.datastore.MongoDatastore;
 import io.groceryflyers.fetchers.impl.EyFlyerFetcher;
 
 import java.util.regex.Pattern;
@@ -14,6 +15,8 @@ public class Main {
     private final static Pattern POSTAL_CODE_PATTERN = Pattern.compile("[a-zA-Z][0-9][a-zA-Z][0-9][a-zA-Z][0-9]");
 
     public static void main(String[] args) {
+
+        MongoDatastore.getInstance(); //NOTE(Olivier): Little hack to initialize mongo connnection on server start cuz singleton... crappy I know...
 
         port(PORT);
 
