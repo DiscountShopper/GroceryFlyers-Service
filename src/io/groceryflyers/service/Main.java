@@ -77,7 +77,7 @@ public class Main {
         });
         get("/api/publications/:bannerCode/:guid", (request, response) ->  {
             return new EyFlyerFetcher()
-                    .getAllPublicationByStore(
+                    .getAllPublicationSetsByStore(
                             EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")),
                             request.params("guid"));
         }, new JsonTransformer());
