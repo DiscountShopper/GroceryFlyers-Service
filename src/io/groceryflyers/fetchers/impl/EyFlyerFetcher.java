@@ -14,6 +14,7 @@ import io.groceryflyers.models.Publication;
 import io.groceryflyers.models.PublicationItem;
 import io.groceryflyers.models.PublicationSet;
 import io.groceryflyers.models.Store;
+import org.apache.log4j.Logger;
 import org.bson.Document;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * Created by jeremiep on 2016-01-30.
  */
 public class EyFlyerFetcher extends AbstractFetcher {
+    private static Logger LOG = Logger.getLogger(EyFlyerFetcher.class);
     public enum EyFlyersProviders {
         SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC", new SuperCProvider()),
         MAXI("http://eflyer.metro.ca/MAXI/MAXI", new MaxiProvider()),
@@ -157,6 +159,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
         for(Publication pub : this.getAllPublicationByStore(provider, sguid)) {
             Optional<Document> existingPub = MongoDatastore.getInstance().findPublicationIfAvailable(pub.id);
             if(existingPub.isPresent()) {
+                LOG.info("Using caching for " + sguid);
                 PublicationSet existingSet = new GsonBuilder().create().fromJson(existingPub.get().toJson(), PublicationSet.class);
                 pset.add(existingSet);
                 continue;

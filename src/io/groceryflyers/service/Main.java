@@ -66,10 +66,20 @@ public class Main {
         *
         */
 
-        get("/api/publications/:store", (req, res) ->  {
-            //TODO: Get the latest stuff from je
-            return new Object();
+        before("/api/publications/:bannerCode/:guid", (request, response) -> {
+            boolean validParameters = true;
 
+            validParameters = EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")) != null;
+
+            if (!validParameters) {
+                halt(400, "Invalid parameters");
+            }
+        });
+        get("/api/publications/:bannerCode/:guid", (request, response) ->  {
+            return new EyFlyerFetcher()
+                    .getAllPublicationByStore(
+                            EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")),
+                            request.params("guid"));
         }, new JsonTransformer());
     }
 }
