@@ -5,6 +5,7 @@ import io.groceryflyers.fetchers.AbstractProvider;
 import io.groceryflyers.models.utils.MappableTo;
 import org.bson.Document;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -66,7 +67,7 @@ public class PublicationItem implements MappableTo<Document> {
         document.put("imageThumb", this.imageThumb);
         document.put("price", this.price);
         document.put("price_unit", this.price_unit);
-        document.put("keywords.", this.keywords);
+        document.put("keywords.", Arrays.asList(this.keywords));
 
         return document;
     }
