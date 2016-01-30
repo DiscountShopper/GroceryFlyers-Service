@@ -8,7 +8,7 @@ apply plugin:'application'
 
 sourceCompatibility = 1.8
 
-mainClassName = "io.groceryflyers.service.Main"
+mainClassName = "io.groceryflyers.service.MainProgram"
 
 configurations {
     provided
@@ -41,7 +41,7 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'GroceryFliers Service',
                 'Implementation-Version': version,
-                'Main-Class': 'io.groceryflyers.service.Main'
+                'MainProgram-Class': 'io.groceryflyers.service.MainProgram'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }

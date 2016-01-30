@@ -10,7 +10,7 @@ import static spark.Spark.*;
 /**
  * Created by olivier on 2016-01-30.
  */
-public class Main {
+public class MainProgram {
     private final static int PORT = 1337;
     private final static Pattern POSTAL_CODE_PATTERN = Pattern.compile("[a-zA-Z][0-9][a-zA-Z][0-9][a-zA-Z][0-9]");
     private final static Pattern GUID_CODE_PATTERN = Pattern.compile("^[0-9a-z]{8}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{12}$");
