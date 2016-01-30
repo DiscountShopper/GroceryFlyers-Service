@@ -30,7 +30,7 @@ public class MongoDatastore {
     private MongoDatabase database;
 
     private MongoDatastore(){
-        this.mongo = new MongoClient(new MongoClientURI("mongodb://javaservice:q7w8r9t0@162.243.54.4:27017/grocery"));
+        this.mongo = new MongoClient(new MongoClientURI("mongodb://javaservice:q7w8r9t0@162.243.54.4:27017/admin"));
         this.database = mongo.getDatabase("grocery");
     }
 
