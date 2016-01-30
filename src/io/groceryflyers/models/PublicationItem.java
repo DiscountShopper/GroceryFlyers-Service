@@ -1,13 +1,16 @@
 package io.groceryflyers.models;
 
 import com.google.gson.annotations.SerializedName;
+import io.groceryflyers.fetchers.AbstractProvider;
+import io.groceryflyers.models.utils.MappableTo;
+import org.bson.Document;
 
 import java.util.List;
 
 /**
  * Created by jeremiep on 2016-01-30.
  */
-public class PublicationItem {
+public class PublicationItem implements MappableTo<Document> {
     @SerializedName("title_fr")
     public String title_fr;
 
@@ -46,4 +49,25 @@ public class PublicationItem {
 
     @SerializedName("keywords")
     public String[] keywords;
+
+    @Override
+    public Document mapToBusinessModel(AbstractProvider p) {
+        Document document = new Document();
+
+        document.put("title_fr", this.title_fr);
+        document.put("title_en", this.title_en);
+        document.put("description", this.description);
+        document.put("brand_fr", this.brand_fr);
+        document.put("brand_en", this.brand_en);
+        document.put("category_fr", this.category_fr);
+        document.put("category_en", this.category_en);
+        document.put("link", this.link);
+        document.put("image", this.image);
+        document.put("imageThumb", this.imageThumb);
+        document.put("price", this.price);
+        document.put("price_unit", this.price_unit);
+        document.put("keywords.", this.keywords);
+
+        return document;
+    }
 }
