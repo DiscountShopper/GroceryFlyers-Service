@@ -162,7 +162,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
     public static void main(String[] args) {
         EyFlyerFetcher fetcher = new EyFlyerFetcher();
 
-        List<Publication> items = fetcher.getAllPublicationByStore(EyFlyersProviders.METRO, "5bbefd7f-3ebf-463a-8849-bf8c43959d52");
+        List<PublicationSet> items = fetcher.getAllPublicationSetsByStore(EyFlyersProviders.METRO, "5bbefd7f-3ebf-463a-8849-bf8c43959d52");
         System.out.println(items.size());
     }
 }
