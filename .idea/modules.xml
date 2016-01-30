@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GroceryFlyersService.iml" filepath="$PROJECT_DIR$/GroceryFlyersService.iml" />
       <module fileurl="file://$PROJECT_DIR$/io.groceryflyers.iml" filepath="$PROJECT_DIR$/io.groceryflyers.iml" />
     </modules>
   </component>
