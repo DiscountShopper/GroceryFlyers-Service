@@ -11,6 +11,7 @@ import org.bson.Document;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.*;
 
@@ -39,6 +40,12 @@ public class MongoDatastore {
         MongoCollection<Document> collection = database.getCollection(collectionName);
 
         collection.insertOne(model.mapToBusinessModel(null));
+    }
+
+    public void storeModels(String collectionName, List<MappableTo<Document>> models){
+        MongoCollection<Document> collection = database.getCollection(collectionName);
+
+        collection.insertMany(models.stream().map(x -> x.mapToBusinessModel(null)).collect(Collectors.toList()));
     }
 
     public Optional<List<Document>> findPublicationIfAvailable(String guid){
