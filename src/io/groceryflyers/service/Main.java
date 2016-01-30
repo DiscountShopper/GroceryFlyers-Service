@@ -17,6 +17,12 @@ public class Main {
 
         port(PORT);
 
+        /*
+        *
+        *  GET PARTICULAR PROVIDERS STORES BASED ON LOCATION
+        *
+        */
+
         before("/api/stores/:bannerCode/:postalCode", (request, response) -> {
             boolean validParameters = true;
 
@@ -32,6 +38,12 @@ public class Main {
                     .getStoreNearby(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")), req.params(":postalCode"));
         }, new JsonTransformer());
 
+        /*
+        *
+        *  GET STORES CONCATENATION (ALL PROVIDERS) BASED ON LOCATION
+        *
+        */
+
         before("/api/stores/:postalCode", (request, response) -> {
             boolean validParameters = true;
 
@@ -44,6 +56,12 @@ public class Main {
         get("/api/stores/:postalCode", (req, res) ->  {
             return new EyFlyerFetcher().getAllStoreNearby(req.params(":postalCode"));
         }, new JsonTransformer());
+
+        /*
+        *
+        *  GET PUBlICATIONS OF A CERTAIN STORE
+        *
+        */
 
         get("/api/publications/:store", (req, res) ->  {
             //TODO: Get the latest stuff from je
