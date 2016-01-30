@@ -34,4 +34,7 @@ public class Store {
 
     @SerializedName("postal_code")
     public String postal_code;
+
+    @SerializedName("distance")
+    public float distance;
 }
