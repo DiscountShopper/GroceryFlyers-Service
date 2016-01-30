@@ -7,8 +7,6 @@ import com.mongodb.client.MongoDatabase;
 import io.groceryflyers.models.PublicationSet;
 import io.groceryflyers.models.utils.MappableTo;
 import org.bson.Document;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,8 +30,8 @@ public class MongoDatastore {
     private MongoDatabase database;
 
     private MongoDatastore(){
-        this.mongo = new MongoClient(new MongoClientURI(""));
-        this.database = mongo.getDatabase("epicerie");
+        this.mongo = new MongoClient(new MongoClientURI("mongodb://webapi:q7w8r9t0@ds051615.mongolab.com:51615/"));
+        this.database = mongo.getDatabase("epicerieinfo");
     }
 
     public void storeModel(String collectionName, MappableTo<Document> model){
