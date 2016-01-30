@@ -37,4 +37,10 @@ public class Store {
 
     @SerializedName("distance")
     public float distance;
+
+    @SerializedName("longitude")
+    public float longitude;
+
+    @SerializedName("latitude")
+    public float latitude;
 }

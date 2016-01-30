@@ -47,6 +47,12 @@ public class EyFlyersStores implements MappableTo<Store> {
     @Key("Distance")
     private float distance;
 
+    @Key("Longitude")
+    private float longitude;
+
+    @Key("Latitude")
+    private float latitude;
+
     @Override
     public Store mapToBusinessModel(AbstractProvider p) {
         Store s = new Store();
@@ -60,6 +66,8 @@ public class EyFlyersStores implements MappableTo<Store> {
         s.country = this.country;
         s.postal_code = this.postalCode;
         s.distance = this.distance;
+        s.longitude = this.longitude;
+        s.latitude = this.latitude;
 
         return s;
     }
