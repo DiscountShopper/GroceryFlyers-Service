@@ -163,9 +163,9 @@ public class EyFlyerFetcher extends AbstractFetcher {
         for(Publication pub : this.getAllPublicationByStore(provider, sguid)) {
             Optional<Document> existingPub = MongoDatastore.getInstance().findPublicationIfAvailable(pub.id);
             if(existingPub.isPresent()) {
-                LOG.info("Using caching for " + sguid);
                 PublicationSet existingSet = new GsonBuilder().create().fromJson(existingPub.get().toJson(), PublicationSet.class);
                 pset.add(existingSet);
+                LOG.debug("Cached request " + existingSet.publication.id);
                 continue;
             }
 
