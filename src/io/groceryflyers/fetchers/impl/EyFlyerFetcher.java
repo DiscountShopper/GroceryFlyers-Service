@@ -9,10 +9,12 @@ import io.groceryflyers.fetchers.impl.models.EyFlyersStores;
 import io.groceryflyers.fetchers.impl.providers.MetroProvider;
 import io.groceryflyers.models.Publication;
 import io.groceryflyers.models.PublicationItem;
+import io.groceryflyers.models.PublicationSet;
 import io.groceryflyers.models.Store;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -144,6 +146,18 @@ public class EyFlyerFetcher extends AbstractFetcher {
         }
     }
 
+    @Override
+    public List<PublicationSet> getAllPublicationSetsByStore(EyFlyersProviders provider, String sguid) {
+        LinkedList<PublicationSet> pset = new LinkedList<PublicationSet>();
+        for(Publication pub : this.getAllPublicationByStore(provider, sguid)) {
+            PublicationSet set = new PublicationSet();
+            set.publication = pub;
+            set.items = this.getAllPublicationItems(provider, pub.id);
+            pset.add(set);
+        }
+
+        return pset;
+    }
 
     public static void main(String[] args) {
         EyFlyerFetcher fetcher = new EyFlyerFetcher();
