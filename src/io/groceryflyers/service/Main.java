@@ -8,9 +8,12 @@ import static spark.Spark.*;
  * Created by olivier on 2016-01-30.
  */
 public class Main {
+    private final static int PORT = 1337;
     private final static Pattern POSTAL_CODE_PATTERN = Pattern.compile("[a-zA-Z][0-9][a-zA-Z][0-9][a-zA-Z][0-9]");
 
     public static void main(String[] args) {
+
+        port(PORT);
 
         before("/api/:bannerCode/:postalCode", (request, response) -> {
             boolean validParameters = true;
