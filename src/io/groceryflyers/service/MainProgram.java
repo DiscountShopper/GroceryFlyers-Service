@@ -4,10 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.groceryflyers.datastore.MongoDatastore;
 import io.groceryflyers.fetchers.impl.EyFlyerFetcher;
+import io.groceryflyers.fetchers.impl.models.EyFlyerPdfMergeRequest;
+import io.groceryflyers.fetchers.impl.models.EyFlyersProductItemRequest;
+import io.groceryflyers.fetchers.impl.models.EyFlyersPublicationsItems;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import spark.Request;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -145,6 +149,19 @@ public class MainProgram {
 
             return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getRelatedProducts(fields.toArray(new String[fields.size()]), req.params(":postalCode"));
         }, new JsonTransformer());
+
+        /*
+        *
+        *  GET PDF MERGED FROM CART
+        *
+        */
+
+        post("/api/pdf", (req, res) -> {
+
+            EyFlyerPdfMergeRequest itemsRequested = new Gson().fromJson(req.body(), EyFlyerPdfMergeRequest.class);
+            return "";
+        });
+
     }
 
     private static void enforceProviderType(Request request){
