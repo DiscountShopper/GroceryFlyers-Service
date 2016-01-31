@@ -26,6 +26,9 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     @Key("BrandName_fr")
     private String brandNameFr;
 
+    @Key("CategoryId")
+    private String categoryId;
+
     @Key("CategoryName")
     private String category;
 
@@ -76,7 +79,7 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
 
         r.brand_fr = this.brandNameFr;
         r.brand_en = this.brandName;
-
+        r.category_id = this.categoryId;
         r.category_fr = this.categoryFr;
         r.category_en = this.category;
 

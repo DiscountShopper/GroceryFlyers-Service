@@ -30,6 +30,9 @@ public class PublicationItem implements MappableTo<Document> {
     @SerializedName("brand_en")
     public String brand_en;
 
+    @SerializedName("category_id")
+    public String category_id;
+
     @SerializedName("category_fr")
     public String category_fr;
 
@@ -67,6 +70,7 @@ public class PublicationItem implements MappableTo<Document> {
         document.put("description", this.description);
         document.put("brand_fr", this.brand_fr);
         document.put("brand_en", this.brand_en);
+        document.put("category_id", this.category_id);
         document.put("category_fr", this.category_fr);
         document.put("category_en", this.category_en);
         document.put("link", this.link);
