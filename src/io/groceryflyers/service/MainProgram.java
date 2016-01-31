@@ -20,7 +20,6 @@ public class MainProgram {
     private final static Pattern GUID_CODE_PATTERN = Pattern.compile("^[0-9a-z]{8}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{12}$");
 
     public static void main(String[] args) {
-        Logger.getLogger(MainProgram.class).warn("lololol");
         MongoDatastore.getInstance(); //NOTE(Olivier): Little hack to initialize mongo connnection on server start cuz singleton... crappy I know...
 
         port(PORT);
@@ -107,7 +106,7 @@ public class MainProgram {
         *
         */
 
-        get("/api/publications/closest/:postalCode", (req, res) -> {
+        get("/api/closest/publications/:postalCode", (req, res) -> {
 
             enforcePostalCode(req);
 
