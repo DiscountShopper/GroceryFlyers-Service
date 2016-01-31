@@ -309,7 +309,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
 
                 s1.retainAll(s2);
 
-                if(s1.size() >= 1) {
+                if(s1.size() >= 3) {
                     result.put(item, s1.size());
                 }
             }
