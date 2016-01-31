@@ -144,7 +144,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
                 case "SHOPPERS_DRUG_MART":
                     return SHOPPERS_DRUG_MART;
                 default:
-                    return null;
+                    throw new RuntimeException("Unknown bannerCode from string " + provider);
             }
         }
 
