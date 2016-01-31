@@ -108,6 +108,12 @@ public class MainProgram {
                             request.params("pguid"));
         }, new JsonTransformer());
 
+        /*
+        *
+        *  GET A SINGLE PRODUCT
+        *
+        */
+
         before("/api/products/:publicationId/:productId", (request, response) -> {
             boolean validParameters = true;
 
@@ -121,6 +127,25 @@ public class MainProgram {
         get("/api/products/:publicationId/:productId", (request, response) -> {
             Optional<Document> product = MongoDatastore.getInstance().findProduct(request.params(":publicationId"), request.params(":productId"));
             return product.orElseGet(Document::new);
+        }, new JsonTransformer());
+
+        /*
+        *
+        *  GET ALL PRODUCTS FROM EACH ONE OF THE CLOSEST STORES
+        *
+        */
+
+        before("/api/publications/closest/:postalCode", (request, response) -> {
+            boolean validParameters = true;
+
+            validParameters = POSTAL_CODE_PATTERN.matcher(request.params(":postalCode")).matches();
+
+            if (!validParameters) {
+                halt(400, "Invalid parameters");
+            }
+        });
+        get("/api/publications/closest/:postalCode", (request, response) -> {
+            return new EyFlyerFetcher().getAllPublicationSetsForAllStores(request.params(":postalCode"));
         }, new JsonTransformer());
     }
 }
