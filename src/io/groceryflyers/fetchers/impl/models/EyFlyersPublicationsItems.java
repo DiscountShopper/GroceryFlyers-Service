@@ -74,6 +74,9 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     @Key("PublicationId")
     private String publication_id;
 
+    @Key("PageNumber")
+    private Integer page_number;
+
     @Override
     public PublicationItem mapToBusinessModel(AbstractProvider p) {
         PublicationItem r = new PublicationItem();
@@ -105,6 +108,8 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
         r.publication_id = this.publication_id;
 
         r.price_number = this.price_as_number;
+
+        r.page_number = this.page_number;
 
         return r;
     }

@@ -72,6 +72,9 @@ public class PublicationItem implements MappableTo<Document> {
     @SerializedName("publication_id")
     public String publication_id;
 
+    @SerializedName("page_number")
+    public Integer page_number;
+
     @Override
     public int hashCode() {
         return this.identifier.hashCode();
@@ -101,6 +104,7 @@ public class PublicationItem implements MappableTo<Document> {
         document.put("effective_end_date", this.effective_end_date);
         document.put("publication_id", this.publication_id);
         document.put("price_number", this.price_number);
+        document.put("page_number", this.page_number);
 
         return document;
     }

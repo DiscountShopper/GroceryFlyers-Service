@@ -15,7 +15,10 @@ import io.groceryflyers.models.*;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -97,6 +100,13 @@ public class EyFlyerFetcher extends AbstractFetcher {
 
         public String getCategoriesByPublication(String pguid) {
             return this.getBaseUrl().concat("/fr/" + pguid + "/Publication/Categories");
+        }
+
+        public String getPdfPagesUrl(String pguid, String sguid, Integer singlePage) {
+            return this.getBaseUrl().concat("/fr/" + pguid + "/Page/PDF?" +
+                    "pageNums=" + singlePage.toString() + "&" +
+                    "print=false&" +
+                    "storeId=" + sguid);
         }
 
         public EyFlyerProvider getProvider() { return this.provider; }
@@ -319,14 +329,34 @@ public class EyFlyerFetcher extends AbstractFetcher {
         return result;
     }
 
+    public File downloadPDFForPublicationItem(EyFlyersProviders provider, String sguid, String pubguid, String pguid) {
+        PublicationItem pubItem = new GsonBuilder().create().fromJson(
+                MongoDatastore.getInstance().findProduct(pguid, pguid).get().toJson(),
+                PublicationItem.class);
+        try {
+            HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
+                    new GenericUrl(provider.getPdfPagesUrl(pubItem.identifier, pubguid, pubItem.page_number))
+            );
+
+            File downloadPdf = new File("./tmp/", pguid.concat(".pdf"));
+            OutputStream fout = new FileOutputStream(downloadPdf);
+            req.execute().download(fout);
+            fout.close();
+
+            return downloadPdf;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void main(String[] args) {
         EyFlyerFetcher fetcher = new EyFlyerFetcher(EyFlyersFetcherTypes.DRUGSTORES);
 
         //ArrayList<String> strs = new ArrayList<>();
         //strs.add("meat");
         //strs.add("steak");
-        List<Category> items = fetcher.getAllCategories("h1x2t9");
-        //List<PublicationItem> items = fetcher.getRelatedProducts(new String[] { "biscuits", "granola" }, "h1x2t9");
+        //List<Publication> items = fetcher.getAllPu(new String[] { "biscuits", "granola" }, "h1x2t9");
+        List<Publication> items = fetcher.getAllPublicationByStore(EyFlyersProviders.MAXI, "3c4099e9-983e-4eb6-beee-3b5b90432e90");
         System.out.println(items.size());
     }
 }
