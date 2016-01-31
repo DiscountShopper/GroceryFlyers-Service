@@ -3,21 +3,19 @@ package io.groceryflyers.fetchers.impl;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.mongodb.Mongo;
 import io.groceryflyers.datastore.MongoDatastore;
 import io.groceryflyers.fetchers.AbstractFetcher;
 import io.groceryflyers.fetchers.impl.models.EyFlyersCategories;
 import io.groceryflyers.fetchers.impl.models.EyFlyersPublications;
 import io.groceryflyers.fetchers.impl.models.EyFlyersPublicationsItems;
 import io.groceryflyers.fetchers.impl.models.EyFlyersStores;
-import io.groceryflyers.fetchers.impl.providers.*;
+import io.groceryflyers.fetchers.impl.providers.drugstores.*;
+import io.groceryflyers.fetchers.impl.providers.groceries.*;
 import io.groceryflyers.models.*;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -51,7 +49,13 @@ public class EyFlyerFetcher extends AbstractFetcher {
         IGA("http://eflyer.metro.ca/IGA/IGA", "IGA", EyFlyersFetcherTypes.GROCERIES, new IGAProvider()),
         METRO("http://eflyer.metro.ca/MTR/MTR", "METRO", EyFlyersFetcherTypes.GROCERIES, new MetroProvider()),
         LOBLAWS("http://eflyer.metro.ca/LOB/LOB", "LOBLAWS", EyFlyersFetcherTypes.GROCERIES, new LoblawsProvider()),
-        PROVIGO("http://eflyer.metro.ca/PROV/PROV", "PROVIGO", EyFlyersFetcherTypes.GROCERIES, new LoblawsProvider());
+        PROVIGO("http://eflyer.metro.ca/PROV/PROV", "PROVIGO", EyFlyersFetcherTypes.GROCERIES, new LoblawsProvider()),
+        BRUNET("http://eflyer.metro.ca/BRNT/BRNT", "BRUNET", EyFlyersFetcherTypes.DRUGSTORES, new BrunetProvider()),
+        JEAN_COUTU("http://eflyer.metro.ca/JCP/JCP", "JEAN_COUTU", EyFlyersFetcherTypes.DRUGSTORES, new JeanCoutuProvider()),
+        UNIPRIX("http://eflyer.metro.ca/UNIP/UNIP", "UNIPRIX", EyFlyersFetcherTypes.DRUGSTORES, new UniPrixProvider()),
+        PROXIM("http://eflyer.metro.ca/PXM/PXM", "PROXIM", EyFlyersFetcherTypes.DRUGSTORES, new ProximProvider()),
+        PHARMAPRIX("http://eflyer.metro.ca/PHX/PHX", "PHARMAPRIX",EyFlyersFetcherTypes.DRUGSTORES, new PharmaPrixProvider())
+        ;
 
 
         private String base_url;
@@ -111,6 +115,16 @@ public class EyFlyerFetcher extends AbstractFetcher {
                     return LOBLAWS;
                 case "PROVIGO":
                     return PROVIGO;
+                case "BRUNET":
+                    return BRUNET;
+                case "JEAN_COUTU":
+                    return JEAN_COUTU;
+                case "UNIPRIX":
+                    return UNIPRIX;
+                case "PROXIM":
+                    return PROXIM;
+                case "PHARMAPRIX":
+                    return PHARMAPRIX;
                 default:
                     return null;
             }
@@ -121,7 +135,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
                 case GROCERIES:
                     return new EyFlyersProviders[] { SUPER_C, MAXI, IGA, METRO, LOBLAWS, PROVIGO };
                 case DRUGSTORES:
-                    return new EyFlyersProviders[] {};
+                    return new EyFlyersProviders[] { BRUNET, JEAN_COUTU, UNIPRIX, PROXIM, PHARMAPRIX };
             }
 
             return null;
@@ -306,12 +320,13 @@ public class EyFlyerFetcher extends AbstractFetcher {
     }
 
     public static void main(String[] args) {
-        EyFlyerFetcher fetcher = new EyFlyerFetcher(EyFlyersFetcherTypes.GROCERIES);
+        EyFlyerFetcher fetcher = new EyFlyerFetcher(EyFlyersFetcherTypes.DRUGSTORES);
 
         //ArrayList<String> strs = new ArrayList<>();
         //strs.add("meat");
         //strs.add("steak");
-        List<PublicationItem> items = fetcher.getRelatedProducts(new String[] { "biscuits", "granola" }, "h1x2t9");
+        List<Category> items = fetcher.getAllCategories("h1x2t9");
+        //List<PublicationItem> items = fetcher.getRelatedProducts(new String[] { "biscuits", "granola" }, "h1x2t9");
         System.out.println(items.size());
     }
 }

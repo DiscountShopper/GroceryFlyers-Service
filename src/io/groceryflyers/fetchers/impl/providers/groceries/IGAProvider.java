@@ -1,4 +1,4 @@
-package io.groceryflyers.fetchers.impl.providers;
+package io.groceryflyers.fetchers.impl.providers.groceries;
 
 import io.groceryflyers.fetchers.impl.EyFlyerProvider;
 import org.jsoup.Jsoup;
