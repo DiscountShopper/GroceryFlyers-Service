@@ -2,7 +2,9 @@ package io.groceryflyers.service;
 
 import io.groceryflyers.datastore.MongoDatastore;
 import io.groceryflyers.fetchers.impl.EyFlyerFetcher;
+import org.bson.Document;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static spark.Spark.*;
@@ -104,6 +106,21 @@ public class MainProgram {
                     .getAllPublicationSetsByStore(
                             EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")),
                             request.params("pguid"));
+        }, new JsonTransformer());
+
+        before("/api/products/:publicationId:/productId", (request, response) -> {
+            boolean validParameters = true;
+
+            validParameters = GUID_CODE_PATTERN.matcher(request.params(":productId")).matches();
+            validParameters = GUID_CODE_PATTERN.matcher(request.params(":publicationId")).matches();
+
+            if (!validParameters) {
+                halt(400, "Invalid parameters");
+            }
+        });
+        get("/api/products/:publicationId:/productId", (request, response) -> {
+            Optional<Document> product = MongoDatastore.getInstance().findProduct(request.params(":publicationId"), request.params(":productId"));
+            return product.orElseGet(Document::new);
         }, new JsonTransformer());
     }
 }

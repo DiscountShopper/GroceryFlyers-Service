@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.*;
 
 /**
  * Created by olivier on 2016-01-30.
@@ -54,5 +55,14 @@ public class MongoDatastore {
             return Optional.of(result.first());
         }
         return Optional.empty();
+    }
+
+    public Optional<Document> findProduct(String publicationId, String productId){
+        MongoCollection<Document> collection = database.getCollection(PublicationSet.MONGO_DOCUMENT_NAME);
+        Document elemMatchQuery = new Document("$elemMatch", new Document("identifier", productId))
+                .append("publication.identifier", publicationId);
+        Document result = collection.find(elemMatchQuery).first();
+
+        return result == null ? Optional.empty() : Optional.of(result);
     }
 }
