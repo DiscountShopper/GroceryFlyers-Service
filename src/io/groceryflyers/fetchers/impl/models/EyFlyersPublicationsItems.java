@@ -38,12 +38,6 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     @Key("LinkURL")
     private String link;
 
-    @Key("EffectiveStartDate")
-    private String effectiveStartDate;
-
-    @Key("EffectiveEndDate")
-    private String effectiveEndDate;
-
     @Key("ImageURL")
     private String imageUrl;
 
