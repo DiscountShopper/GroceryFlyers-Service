@@ -1,11 +1,15 @@
 package io.groceryflyers.service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.groceryflyers.datastore.MongoDatastore;
 import io.groceryflyers.fetchers.impl.EyFlyerFetcher;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import spark.Request;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -124,6 +128,22 @@ public class MainProgram {
             enforcePostalCode(req);
 
             return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getAllCategories(req.params(":postalCode"));
+        }, new JsonTransformer());
+
+        /*
+        *
+        *  GET ALL RECOMMENDED PRODCUTS
+        *
+        */
+
+        post("/api/recommended/products/:postalCode", (req, res) -> {
+            enforceProviderType(req);
+            enforcePostalCode(req);
+
+            Map jsonObject = (Map) new Gson().fromJson(req.body(), Object.class);
+            List<String> fields = (List<String>)jsonObject.get("key_words");
+
+            return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getRelatedProducts(fields.toArray(new String[fields.size()]), req.params(":postalCode"));
         }, new JsonTransformer());
     }
 
