@@ -394,7 +394,9 @@ public class EyFlyerFetcher extends AbstractFetcher {
     public static void main(String[] args) {
         EyFlyerFetcher fetcher = new EyFlyerFetcher(EyFlyersFetcherTypes.GROCERIES);
 
-        List<PublicationSet> items = fetcher.getAllPublicationSetsByStore(EyFlyersProviders.MAXI, "3c4099e9-983e-4eb6-beee-3b5b90432e90");
+        fetcher.getAllStoreNearby("H1X 2T9");
+
+        /*List<PublicationSet> items = fetcher.getAllPublicationSetsByStore(EyFlyersProviders.MAXI, "3c4099e9-983e-4eb6-beee-3b5b90432e90");
         System.out.println(items.size());
         LinkedList<EyFlyersProductItemRequest> reqs = new LinkedList<>();
         reqs.add(new EyFlyersProductItemRequest("MAXI", "1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "3a1b3d6d-cc0e-4c33-b6f9-651e1e65e86b"));
@@ -402,6 +404,6 @@ public class EyFlyerFetcher extends AbstractFetcher {
         reqs.add(new EyFlyersProductItemRequest("MAXI", "1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "2d2c0f4e-3656-4e36-baf4-c89c5e8d2faa"));
 
         String mergedPdf = fetcher.downloadMergeAndUploadAllPDFForPublications(reqs);
-        System.out.print(mergedPdf);
+        System.out.print(mergedPdf);*/
     }
 }

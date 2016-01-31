@@ -43,4 +43,7 @@ public class Store {
 
     @SerializedName("latitude")
     public float latitude;
+
+    @SerializedName("phone")
+    public String phone;
 }
