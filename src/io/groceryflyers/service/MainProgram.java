@@ -31,11 +31,11 @@ public class MainProgram {
         */
 
         get("/api/stores/:bannerCode/:postalCode", (req, res) ->  {
-
+            enforceProviderType(req);
             enforceBannerCode(req);
             enforcePostalCode(req);
 
-            return new EyFlyerFetcher()
+            return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type")))
                     .getStoreNearby(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")), req.params(":postalCode"));
         }, new JsonTransformer());
 
@@ -46,10 +46,10 @@ public class MainProgram {
         */
 
         get("/api/stores/:postalCode", (req, res) ->  {
-
+            enforceProviderType(req);
             enforcePostalCode(req);
 
-            return new EyFlyerFetcher().getAllStoreNearby(req.params(":postalCode"));
+            return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getAllStoreNearby(req.params(":postalCode"));
         }, new JsonTransformer());
 
         /*
@@ -59,11 +59,11 @@ public class MainProgram {
         */
 
         get("/api/publications/:bannerCode/:publicationId", (req, res) ->  {
-
+            enforceProviderType(req);
             enforceBannerCode(req);
             enforcePublicationId(req);
 
-            return new EyFlyerFetcher()
+            return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type")))
                     .getAllPublicationSetsByStore(
                             EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")),
                             req.params(":publicationId"));
@@ -76,10 +76,10 @@ public class MainProgram {
         */
 
         get("/api/categories/:productId", (req, res) ->  {
-
+            enforceProviderType(req);
             enforceProductId(req);
 
-            return new EyFlyerFetcher()
+            return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type")))
                     .getAllPublicationSetsByStore(
                             EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")),
                             req.params(":productId"));
@@ -92,7 +92,7 @@ public class MainProgram {
         */
 
         get("/api/products/:publicationId/:productId", (req, res) -> {
-
+            enforceProviderType(req);
             enforcePublicationId(req);
             enforceProductId(req);
 
@@ -107,10 +107,10 @@ public class MainProgram {
         */
 
         get("/api/closest/publications/:postalCode", (req, res) -> {
-
+            enforceProviderType(req);
             enforcePostalCode(req);
 
-            return new EyFlyerFetcher().getAllPublicationSetsForAllStores(req.params(":postalCode"));
+            return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getAllPublicationSetsForAllStores(req.params(":postalCode"));
         }, new JsonTransformer());
 
         /*
@@ -120,11 +120,17 @@ public class MainProgram {
         */
 
         get("/api/closest/categories/:postalCode", (req, res) -> {
-
+            enforceProviderType(req);
             enforcePostalCode(req);
 
-            return new EyFlyerFetcher().getAllCategories(req.params(":postalCode"));
+            return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getAllCategories(req.params(":postalCode"));
         }, new JsonTransformer());
+    }
+
+    private static void enforceProviderType(Request request){
+        if(!EyFlyerFetcher.EyFlyersProviders.isProviderTypeSupported(request.queryParams("type"))){
+            halt(400, "You must provide the api type");
+        }
     }
 
     private static void enforcePostalCode(Request request){
