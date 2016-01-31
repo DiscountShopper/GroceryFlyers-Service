@@ -28,18 +28,22 @@ import java.util.stream.Collectors;
 public class EyFlyerFetcher extends AbstractFetcher {
     private static Logger LOG = Logger.getLogger(EyFlyerFetcher.class);
     public enum EyFlyersProviders {
-        SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC", new SuperCProvider()),
-        MAXI("http://eflyer.metro.ca/MAXI/MAXI", new MaxiProvider()),
-        IGA("http://eflyer.metro.ca/IGA/IGA", new IGAProvider()),
-        METRO("http://eflyer.metro.ca/MTR/MTR", new MetroProvider()),
-        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", new LoblawsProvider());
+        SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC", "SUPERC", new SuperCProvider()),
+        MAXI("http://eflyer.metro.ca/MAXI/MAXI", "MAXI", new MaxiProvider()),
+        IGA("http://eflyer.metro.ca/IGA/IGA", "IGA", new IGAProvider()),
+        METRO("http://eflyer.metro.ca/MTR/MTR", "METRO", new MetroProvider()),
+        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", "LOBLAWS", new LoblawsProvider());
 
         private String base_url;
+        private String code;
         private EyFlyerProvider provider;
-        EyFlyersProviders(String base_url, EyFlyerProvider provider) {
+        EyFlyersProviders(String base_url, String code, EyFlyerProvider provider) {
             this.base_url = base_url;
+            this.code = code;
             this.provider = provider;
         }
+
+        public String getBannerCode() { return this.code; }
 
         public String getBaseUrl() {
             return this.base_url;
@@ -171,6 +175,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
 
             PublicationSet set = new PublicationSet();
             set.publication = pub;
+            set.banner = provider.getBannerCode();
             set.items = this.getAllPublicationItems(provider, pub.id);
 
             MongoDatastore.getInstance().storeModel(PublicationSet.MONGO_DOCUMENT_NAME, set);
@@ -213,10 +218,51 @@ public class EyFlyerFetcher extends AbstractFetcher {
         return sets;
     }
 
+    public List<PublicationItem> getRelatedProducts(List<String> keywords, String postalCode) {
+        List<PublicationSet> sets = this.getAllPublicationSetsForAllStores(postalCode);
+        LinkedList<PublicationItem> result = new LinkedList<PublicationItem>();
+
+        for(PublicationSet set : sets) {
+            for(PublicationItem item : set.items) {
+                List<String> original = keywords;
+
+                List<String> add = new LinkedList<String>(Arrays.asList(item.keywords));
+                add.removeAll(original); // selected - original
+                List<String> remove = new LinkedList<String>(original);
+                remove.removeAll(Arrays.asList(item.keywords));
+
+                original.addAll(add);
+                original.removeAll(remove); // original is the intersection
+
+                if(original.size() >= 2) {
+                    result.add(item);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public List<Category> getAllCategories(String postalCode) {
+        List<Category> result = new LinkedList<Category>();
+        for(PublicationSet pubSet : this.getAllPublicationSetsForAllStores(postalCode)) {
+            List<Category> categories = this.getAllCategoriesByPublication(
+                    EyFlyersProviders.getProviderFromString(pubSet.banner),
+                    pubSet.publication.id);
+            for(Category cat : categories) {
+                if(!result.contains(cat)) {
+                    result.add(cat);
+                }
+            }
+        }
+
+        return result;
+    }
+
     public static void main(String[] args) {
         EyFlyerFetcher fetcher = new EyFlyerFetcher();
 
-        List<PublicationSet> items = fetcher.getAllPublicationSetsForAllStores("h1x2t9");
+        List<Category> items = fetcher.getAllCategories("h1x2t9");
         System.out.println(items.size());
     }
 }
