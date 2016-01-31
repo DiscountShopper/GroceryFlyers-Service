@@ -73,6 +73,11 @@ public class PublicationItem implements MappableTo<Document> {
     public String publication_id;
 
     @Override
+    public int hashCode() {
+        return this.identifier.hashCode();
+    }
+
+    @Override
     public Document mapToBusinessModel(AbstractProvider p) {
         Document document = new Document();
 

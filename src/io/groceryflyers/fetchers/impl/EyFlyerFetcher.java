@@ -268,7 +268,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
 
     public List<PublicationItem> getRelatedProducts(String[] keywords, String postalCode) {
         List<PublicationSet> sets = this.getAllPublicationSetsForAllStores(postalCode);
-        LinkedList<PublicationItem> result = new LinkedList<>();
+        HashMap<PublicationItem, Integer> result = new HashMap<PublicationItem, Integer>();
 
         for(PublicationSet set : sets) {
             for(PublicationItem item : set.items) {
@@ -278,12 +278,15 @@ public class EyFlyerFetcher extends AbstractFetcher {
                 s1.retainAll(s2);
 
                 if(s1.size() >= 1) {
-                    result.add(item);
+                    result.put(item, s1.size());
                 }
             }
         }
 
-        return result;
+        return result.entrySet()
+                .stream()
+                .sorted((x1, x2) -> { return x2.getValue().compareTo(x1.getValue()); })
+                .map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
     public List<Category> getAllCategories(String postalCode) {
