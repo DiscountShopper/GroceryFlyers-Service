@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     @Key("Id")
-    private String id;
+    private String identifier;
 
     @Key("ProductTitle")
     private String title;
@@ -53,6 +53,9 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     @Key("Price")
     private String price;
 
+    @Key("PriceAsNumber")
+    private float price_as_number;
+
     @Key("PriceUnit")
     private String priceUnit;
 
@@ -68,10 +71,13 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     @Key("EffectiveEndDate")
     private String effective_end_date;
 
+    @Key("PublicationId")
+    private String publication_id;
+
     @Override
     public PublicationItem mapToBusinessModel(AbstractProvider p) {
         PublicationItem r = new PublicationItem();
-        r.id = this.id;
+        r.identifier = this.identifier;
         r.title_fr = p.getProductTitleFrench(this.title);
         r.title_en = p.getProductTitleEnglish(this.title);
 
@@ -95,6 +101,10 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
 
         r.effective_start_date = this.effective_start_date;
         r.effective_end_date = this.effective_end_date;
+
+        r.publication_id = this.publication_id;
+
+        r.price_number = this.price_as_number;
 
         return r;
     }

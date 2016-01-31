@@ -12,8 +12,8 @@ import java.util.List;
  * Created by jeremiep on 2016-01-30.
  */
 public class PublicationItem implements MappableTo<Document> {
-    @SerializedName("id")
-    public String id;
+    @SerializedName("identifier")
+    public String identifier;
 
     @SerializedName("title_fr")
     public String title_fr;
@@ -51,6 +51,9 @@ public class PublicationItem implements MappableTo<Document> {
     @SerializedName("price")
     public String price;
 
+    @SerializedName("price_number")
+    public float price_number;
+
     @SerializedName("price_unit")
     public String price_unit;
 
@@ -66,11 +69,14 @@ public class PublicationItem implements MappableTo<Document> {
     @SerializedName("effective_end_date")
     public String effective_end_date;
 
+    @SerializedName("publication_id")
+    public String publication_id;
+
     @Override
     public Document mapToBusinessModel(AbstractProvider p) {
         Document document = new Document();
 
-        document.put("identifier", this.id);
+        document.put("identifier", this.identifier);
         document.put("title_fr", this.title_fr);
         document.put("title_en", this.title_en);
         document.put("description", this.description);
@@ -88,6 +94,8 @@ public class PublicationItem implements MappableTo<Document> {
         document.put("banner_code", this.banner_code);
         document.put("effective_start_date", this.effective_start_date);
         document.put("effective_end_date", this.effective_end_date);
+        document.put("publication_id", this.publication_id);
+        document.put("price_number", this.price_number);
 
         return document;
     }
