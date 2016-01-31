@@ -4,9 +4,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
 
 import java.io.*;
 
@@ -43,8 +41,10 @@ public class AwsS3Manager {
 
     public String persist(String s3Key, File theFile) {
         try {
+            AccessControlList acl = new AccessControlList();
+            acl.grantPermission(GroupGrantee.AllUsers, Permission.Read);
             this.client.putObject(
-                    new PutObjectRequest(S3_BUCKET, s3Key, theFile)
+                    new PutObjectRequest(S3_BUCKET, s3Key, theFile).withAccessControlList(acl)
             );
 
             return this.getPublicUrl(s3Key);

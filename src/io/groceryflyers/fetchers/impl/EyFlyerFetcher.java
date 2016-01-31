@@ -5,20 +5,16 @@ import com.google.api.client.http.HttpRequest;
 import com.google.gson.GsonBuilder;
 import io.groceryflyers.datastore.MongoDatastore;
 import io.groceryflyers.fetchers.AbstractFetcher;
-import io.groceryflyers.fetchers.impl.models.EyFlyersCategories;
-import io.groceryflyers.fetchers.impl.models.EyFlyersPublications;
-import io.groceryflyers.fetchers.impl.models.EyFlyersPublicationsItems;
-import io.groceryflyers.fetchers.impl.models.EyFlyersStores;
+import io.groceryflyers.fetchers.impl.models.*;
 import io.groceryflyers.fetchers.impl.providers.drugstores.*;
 import io.groceryflyers.fetchers.impl.providers.groceries.*;
 import io.groceryflyers.models.*;
+import io.groceryflyers.storage.AwsS3Manager;
 import org.apache.log4j.Logger;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.bson.Document;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -103,10 +99,17 @@ public class EyFlyerFetcher extends AbstractFetcher {
         }
 
         public String getPdfPagesUrl(String pguid, String sguid, Integer singlePage) {
-            return this.getBaseUrl().concat("/fr/" + pguid + "/Page/PDF?" +
-                    "pageNums=" + singlePage.toString() + "&" +
-                    "print=false&" +
-                    "storeId=" + sguid);
+            if(singlePage == null) {
+                return this.getBaseUrl().concat("/fr/" + pguid + "/Page/PDF?" +
+                        "print=false&" +
+                        "storeId=" + sguid);
+            } else {
+                return this.getBaseUrl().concat("/fr/" + pguid + "/Page/PDF?" +
+                        "pageNums=" + singlePage.toString() + "&" +
+                        "print=false&" +
+                        "storeId=" + sguid);
+            }
+
         }
 
         public EyFlyerProvider getProvider() { return this.provider; }
@@ -329,16 +332,16 @@ public class EyFlyerFetcher extends AbstractFetcher {
         return result;
     }
 
-    public File downloadPDFForPublicationItem(EyFlyersProviders provider, String sguid, String pubguid, String pguid) {
+    public File downloadPDFForPublicationItem(EyFlyersProviders provider, EyFlyersProductItemRequest re) {
         PublicationItem pubItem = new GsonBuilder().create().fromJson(
-                MongoDatastore.getInstance().findProduct(pguid, pguid).get().toJson(),
+                MongoDatastore.getInstance().findProduct(re.pubguid, re.pguid).get().toJson(),
                 PublicationItem.class);
         try {
             HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
-                    new GenericUrl(provider.getPdfPagesUrl(pubItem.identifier, pubguid, pubItem.page_number))
+                    new GenericUrl(provider.getPdfPagesUrl(re.pubguid, re.sguid, pubItem.page_number))
             );
 
-            File downloadPdf = new File("./tmp/", pguid.concat(".pdf"));
+            File downloadPdf = new File("./tmp/" + re.pguid.concat(".pdf"));
             OutputStream fout = new FileOutputStream(downloadPdf);
             req.execute().download(fout);
             fout.close();
@@ -349,14 +352,48 @@ public class EyFlyerFetcher extends AbstractFetcher {
         }
     }
 
-    public static void main(String[] args) {
-        EyFlyerFetcher fetcher = new EyFlyerFetcher(EyFlyersFetcherTypes.DRUGSTORES);
+    public String downloadMergeAndUploadAllPDFForPublications(EyFlyersProviders providers, List<EyFlyersProductItemRequest> requests) {
+        List<File> downloadedPdfs = new LinkedList<File>();
+        PDFMergerUtility merge = new PDFMergerUtility();
 
-        //ArrayList<String> strs = new ArrayList<>();
-        //strs.add("meat");
-        //strs.add("steak");
-        //List<Publication> items = fetcher.getAllPu(new String[] { "biscuits", "granola" }, "h1x2t9");
-        List<Publication> items = fetcher.getAllPublicationByStore(EyFlyersProviders.MAXI, "3c4099e9-983e-4eb6-beee-3b5b90432e90");
+        for(EyFlyersProductItemRequest req : requests) {
+            File f = this.downloadPDFForPublicationItem(providers, req);
+            downloadedPdfs.add(f);
+
+            try {
+                merge.addSource(f);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        File mergedPdf = new File("./tmp/".concat(UUID.randomUUID().toString()).concat(".pdf"));
+
+        try {
+            FileOutputStream out = new FileOutputStream(mergedPdf);
+            merge.setDestinationStream(out);
+            merge.mergeDocuments(null);
+            out.close();
+
+            downloadedPdfs.stream().forEach(x -> { x.delete(); });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return AwsS3Manager.getInstance().persist(mergedPdf.getName(), mergedPdf);
+    }
+
+    public static void main(String[] args) {
+        EyFlyerFetcher fetcher = new EyFlyerFetcher(EyFlyersFetcherTypes.GROCERIES);
+
+        List<PublicationSet> items = fetcher.getAllPublicationSetsByStore(EyFlyersProviders.MAXI, "3c4099e9-983e-4eb6-beee-3b5b90432e90");
         System.out.println(items.size());
+        LinkedList<EyFlyersProductItemRequest> reqs = new LinkedList<>();
+        reqs.add(new EyFlyersProductItemRequest("1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "3a1b3d6d-cc0e-4c33-b6f9-651e1e65e86b"));
+        reqs.add(new EyFlyersProductItemRequest("1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "c47b5f79-b872-4bbc-93e8-fc3a31e3d2cb"));
+        reqs.add(new EyFlyersProductItemRequest("1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "2d2c0f4e-3656-4e36-baf4-c89c5e8d2faa"));
+
+        String mergedPdf = fetcher.downloadMergeAndUploadAllPDFForPublications(EyFlyersProviders.MAXI, reqs);
+        System.out.print(mergedPdf);
     }
 }
