@@ -54,7 +54,7 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     private String price;
 
     @Key("PriceAsNumber")
-    private float price_as_number;
+    private Float price_as_number;
 
     @Key("PriceUnit")
     private String priceUnit;
