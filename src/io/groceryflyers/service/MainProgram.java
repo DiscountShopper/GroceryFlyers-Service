@@ -3,6 +3,7 @@ package io.groceryflyers.service;
 import io.groceryflyers.datastore.MongoDatastore;
 import io.groceryflyers.fetchers.impl.EyFlyerFetcher;
 import org.bson.Document;
+import spark.Request;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -29,17 +30,11 @@ public class MainProgram {
         *
         */
 
-        before("/api/stores/:bannerCode/:postalCode", (request, response) -> {
-            boolean validParameters = true;
-
-            validParameters = POSTAL_CODE_PATTERN.matcher(request.params(":postalCode")).matches();
-            validParameters = EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")) != null;
-
-            if (!validParameters) {
-                halt(400, "Invalid parameters");
-            }
-        });
         get("/api/stores/:bannerCode/:postalCode", (req, res) ->  {
+
+            enforceBannerCode(req);
+            enforcePostalCode(req);
+
             return new EyFlyerFetcher()
                     .getStoreNearby(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")), req.params(":postalCode"));
         }, new JsonTransformer());
@@ -50,16 +45,10 @@ public class MainProgram {
         *
         */
 
-        before("/api/stores/:postalCode", (request, response) -> {
-            boolean validParameters = true;
-
-            validParameters = POSTAL_CODE_PATTERN.matcher(request.params(":postalCode")).matches();
-
-            if (!validParameters) {
-                halt(400, "Invalid parameters");
-            }
-        });
         get("/api/stores/:postalCode", (req, res) ->  {
+
+            enforcePostalCode(req);
+
             return new EyFlyerFetcher().getAllStoreNearby(req.params(":postalCode"));
         }, new JsonTransformer());
 
@@ -69,21 +58,15 @@ public class MainProgram {
         *
         */
 
-        before("/api/publications/:bannerCode/:guid", (request, response) -> {
-            boolean validParameters = true;
+        get("/api/publications/:bannerCode/:publicationId", (req, res) ->  {
 
-            validParameters = EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")) != null;
-            validParameters = GUID_CODE_PATTERN.matcher(request.params(":guid")).matches();
+            enforceBannerCode(req);
+            enforcePublicationId(req);
 
-            if (!validParameters) {
-                halt(400, "Invalid parameters");
-            }
-        });
-        get("/api/publications/:bannerCode/:guid", (request, response) ->  {
             return new EyFlyerFetcher()
                     .getAllPublicationSetsByStore(
-                            EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")),
-                            request.params("guid"));
+                            EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")),
+                            req.params(":publicationId"));
         }, new JsonTransformer());
 
         /*
@@ -91,21 +74,15 @@ public class MainProgram {
         *  GET CATEGORIES OF A CERTAIN PUBLICATION
         *
         */
-        before("/api/categories/:bannerCode/:pguid", (request, response) -> {
-            boolean validParameters = true;
 
-            validParameters = EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")) != null;
-            validParameters = GUID_CODE_PATTERN.matcher(request.params(":pguid")).matches();
+        get("/api/categories/:productId", (req, res) ->  {
 
-            if (!validParameters) {
-                halt(400, "Invalid parameters");
-            }
-        });
-        get("/api/categories/:pguid", (request, response) ->  {
+            enforceProductId(req);
+
             return new EyFlyerFetcher()
                     .getAllPublicationSetsByStore(
-                            EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")),
-                            request.params("pguid"));
+                            EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")),
+                            req.params(":productId"));
         }, new JsonTransformer());
 
         /*
@@ -114,18 +91,12 @@ public class MainProgram {
         *
         */
 
-        before("/api/products/:publicationId/:productId", (request, response) -> {
-            boolean validParameters = true;
+        get("/api/products/:publicationId/:productId", (req, res) -> {
 
-            validParameters = GUID_CODE_PATTERN.matcher(request.params(":productId")).matches();
-            validParameters = GUID_CODE_PATTERN.matcher(request.params(":publicationId")).matches();
+            enforcePublicationId(req);
+            enforceProductId(req);
 
-            if (!validParameters) {
-                halt(400, "Invalid parameters");
-            }
-        });
-        get("/api/products/:publicationId/:productId", (request, response) -> {
-            Optional<Document> product = MongoDatastore.getInstance().findProduct(request.params(":publicationId"), request.params(":productId"));
+            Optional<Document> product = MongoDatastore.getInstance().findProduct(req.params(":publicationId"), req.params(":productId"));
             return product.orElseGet(Document::new);
         }, new JsonTransformer());
 
@@ -135,17 +106,35 @@ public class MainProgram {
         *
         */
 
-        before("/api/publications/closest/:postalCode", (request, response) -> {
-            boolean validParameters = true;
+        get("/api/publications/closest/:postalCode", (req, res) -> {
 
-            validParameters = POSTAL_CODE_PATTERN.matcher(request.params(":postalCode")).matches();
+            enforcePostalCode(req);
 
-            if (!validParameters) {
-                halt(400, "Invalid parameters");
-            }
-        });
-        get("/api/publications/closest/:postalCode", (request, response) -> {
-            return new EyFlyerFetcher().getAllPublicationSetsForAllStores(request.params(":postalCode"));
+            return new EyFlyerFetcher().getAllPublicationSetsForAllStores(req.params(":postalCode"));
         }, new JsonTransformer());
+    }
+
+    private static void enforcePostalCode(Request request){
+        if(!POSTAL_CODE_PATTERN.matcher(request.params(":postalCode")).matches()){
+            halt(400, "Invalid parameters");
+        }
+    }
+
+    private static void enforcePublicationId(Request request){
+        if(!GUID_CODE_PATTERN.matcher(request.params(":publicationId")).matches()){
+            halt(400, "Invalid parameters");
+        }
+    }
+
+    private static void enforceProductId(Request request){
+        if(!GUID_CODE_PATTERN.matcher(request.params(":productId")).matches()){
+            halt(400, "Invalid parameters");
+        }
+    }
+
+    private static void enforceBannerCode(Request request){
+        if(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")) == null){
+            halt(400, "Invalid parameters");
+        }
     }
 }
