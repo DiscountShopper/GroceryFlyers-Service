@@ -112,6 +112,19 @@ public class MainProgram {
 
             return new EyFlyerFetcher().getAllPublicationSetsForAllStores(req.params(":postalCode"));
         }, new JsonTransformer());
+
+        /*
+        *
+        *  GET ALL CATEGORIES FROM EACH ONE OF THE CLOSEST STORES
+        *
+        */
+
+        get("/api/closest/categories/:postalCode", (req, res) -> {
+
+            enforcePostalCode(req);
+
+            return new EyFlyerFetcher().getAllCategories(req.params(":postalCode"));
+        }, new JsonTransformer());
     }
 
     private static void enforcePostalCode(Request request){
