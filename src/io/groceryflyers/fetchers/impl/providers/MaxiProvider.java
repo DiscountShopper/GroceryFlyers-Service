@@ -25,6 +25,6 @@ public class MaxiProvider extends EyFlyerProvider {
 
     @Override
     public String[] getKeywords(String keywords) {
-        return keywords.split(" ");
+        return Jsoup.parse(keywords).text().split(" ");
     }
 }

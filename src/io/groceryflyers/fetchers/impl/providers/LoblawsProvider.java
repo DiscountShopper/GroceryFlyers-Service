@@ -1,6 +1,8 @@
 package io.groceryflyers.fetchers.impl.providers;
 
+import com.google.api.client.json.Json;
 import io.groceryflyers.fetchers.impl.EyFlyerProvider;
+import org.jsoup.Jsoup;
 
 import java.util.regex.Pattern;
 
@@ -23,6 +25,6 @@ public class LoblawsProvider extends EyFlyerProvider {
 
     @Override
     public String[] getKeywords(String keywords) {
-        return keywords.split(" ");
+        return Jsoup.parse(keywords).text().split(" ");
     }
 }

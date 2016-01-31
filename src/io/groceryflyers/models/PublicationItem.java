@@ -60,6 +60,12 @@ public class PublicationItem implements MappableTo<Document> {
     @SerializedName("banner_code")
     public String banner_code;
 
+    @SerializedName("effective_start_date")
+    public String effective_start_date;
+
+    @SerializedName("effective_end_date")
+    public String effective_end_date;
+
     @Override
     public Document mapToBusinessModel(AbstractProvider p) {
         Document document = new Document();
@@ -80,6 +86,8 @@ public class PublicationItem implements MappableTo<Document> {
         document.put("price_unit", this.price_unit);
         document.put("key_words", Arrays.asList(this.keywords));
         document.put("banner_code", this.banner_code);
+        document.put("effective_start_date", this.effective_start_date);
+        document.put("effective_end_date", this.effective_end_date);
 
         return document;
     }

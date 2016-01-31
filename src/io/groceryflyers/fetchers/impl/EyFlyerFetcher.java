@@ -162,12 +162,12 @@ public class EyFlyerFetcher extends AbstractFetcher {
         LinkedList<PublicationSet> pset = new LinkedList<PublicationSet>();
         for(Publication pub : this.getAllPublicationByStore(provider, sguid)) {
             Optional<Document> existingPub = MongoDatastore.getInstance().findPublicationIfAvailable(pub.id);
-            if(existingPub.isPresent()) {
+            /*if(existingPub.isPresent()) {
                 PublicationSet existingSet = new GsonBuilder().create().fromJson(existingPub.get().toJson(), PublicationSet.class);
                 pset.add(existingSet);
                 LOG.debug("Cached request " + existingSet.publication.id);
                 continue;
-            }
+            }*/
 
             PublicationSet set = new PublicationSet();
             set.publication = pub;

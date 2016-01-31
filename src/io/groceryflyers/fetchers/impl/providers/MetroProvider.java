@@ -1,6 +1,7 @@
 package io.groceryflyers.fetchers.impl.providers;
 
 import io.groceryflyers.fetchers.impl.EyFlyerProvider;
+import org.jsoup.Jsoup;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,11 +35,6 @@ public class MetroProvider extends EyFlyerProvider {
 
     @Override
     public String[] getKeywords(String keywords) {
-        Matcher match = PRODUCT_KEYWORDS_PATT.matcher(keywords);
-        String kwds = "";
-        if(match.matches()) {
-            kwds = match.group(2);
-        }
-        return kwds.split(" ");
+        return Jsoup.parse(keywords).text().split(" ");
     }
 }

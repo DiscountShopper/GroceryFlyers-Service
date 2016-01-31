@@ -35,12 +35,6 @@ public class SuperCProvider extends EyFlyerProvider {
 
     @Override
     public String[] getKeywords(String keywords) {
-        Matcher match = PRODUCT_KEYWORDS_PATT.matcher(keywords);
-        String kwds = "";
-        if(match.matches()) {
-            kwds = match.group(2);
-        }
-        kwds = Jsoup.parse(kwds).text();
-        return kwds.split(" ");
+        return Jsoup.parse(keywords).text().split(" ");
     }
 }

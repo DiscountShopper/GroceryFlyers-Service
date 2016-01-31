@@ -68,6 +68,12 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     @Key("BannerCode")
     private String banner_code;
 
+    @Key("EffectiveStartDate")
+    private String effective_start_date;
+
+    @Key("EffectiveEndDate")
+    private String effective_end_date;
+
     @Override
     public PublicationItem mapToBusinessModel(AbstractProvider p) {
         PublicationItem r = new PublicationItem();
@@ -92,6 +98,9 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
         r.price_unit = this.priceUnit;
         r.keywords = p.getKeywords(this.keywords);
         r.banner_code = this.banner_code;
+
+        r.effective_start_date = this.effective_start_date;
+        r.effective_end_date = this.effective_end_date;
 
         return r;
     }
