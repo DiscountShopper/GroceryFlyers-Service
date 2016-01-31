@@ -132,7 +132,7 @@ public class MainProgram {
 
         /*
         *
-        *  GET ALL CATEGORIES FROM EACH ONE OF THE CLOSEST STORES
+        *  GET ALL RECOMMENDED PRODCUTS
         *
         */
 
