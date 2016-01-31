@@ -28,24 +28,28 @@ import java.util.stream.Collectors;
 public class EyFlyerFetcher extends AbstractFetcher {
     private static Logger LOG = Logger.getLogger(EyFlyerFetcher.class);
     public enum EyFlyersProviders {
-        SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC", "SUPERC", new SuperCProvider()),
-        MAXI("http://eflyer.metro.ca/MAXI/MAXI", "MAXI", new MaxiProvider()),
-        IGA("http://eflyer.metro.ca/IGA/IGA", "IGA", new IGAProvider()),
-        METRO("http://eflyer.metro.ca/MTR/MTR", "METRO", new MetroProvider()),
-        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", "LOBLAWS", new LoblawsProvider()),
-        PROVIGO("http://eflyer.metro.ca/PROV/PROV", "PROVIGO", new LoblawsProvider());
+        SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC", "SUPERC", "GROCERIES", new SuperCProvider()),
+        MAXI("http://eflyer.metro.ca/MAXI/MAXI", "MAXI", "GROCERIES", new MaxiProvider()),
+        IGA("http://eflyer.metro.ca/IGA/IGA", "IGA", "GROCERIES", new IGAProvider()),
+        METRO("http://eflyer.metro.ca/MTR/MTR", "METRO", "GROCERIES", new MetroProvider()),
+        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", "LOBLAWS", "GROCERIES", new LoblawsProvider()),
+        PROVIGO("http://eflyer.metro.ca/PROV/PROV", "PROVIGO", "GROCERIES", new LoblawsProvider());
 
 
         private String base_url;
         private String code;
+        private String type;
         private EyFlyerProvider provider;
-        EyFlyersProviders(String base_url, String code, EyFlyerProvider provider) {
+        EyFlyersProviders(String base_url, String code, String type, EyFlyerProvider provider) {
             this.base_url = base_url;
             this.code = code;
+            this.type = type;
             this.provider = provider;
         }
 
         public String getBannerCode() { return this.code; }
+
+        public String getStoreType() { return this.type; }
 
         public String getBaseUrl() {
             return this.base_url;
@@ -75,7 +79,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
 
         public EyFlyerProvider getProvider() { return this.provider; }
 
-        public static EyFlyersProviders getProviderFromString(String provider) {
+        public static EyFlyersProviders getProviderFromString(String provider, String type) {
             switch(provider){
                 case "SUPERC":
                     return SUPER_C;
@@ -92,6 +96,10 @@ public class EyFlyerFetcher extends AbstractFetcher {
                 default:
                     return null;
             }
+        }
+
+        public static boolean isProviderTypeSupported(String type) {
+            return type.equalsIgnoreCase("GROCERIES") || type.equalsIgnoreCase("DRUGSTORES");
         }
     };
 
