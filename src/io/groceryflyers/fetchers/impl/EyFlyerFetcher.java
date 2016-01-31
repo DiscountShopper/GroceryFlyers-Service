@@ -79,7 +79,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
 
         public EyFlyerProvider getProvider() { return this.provider; }
 
-        public static EyFlyersProviders getProviderFromString(String provider, String type) {
+        public static EyFlyersProviders getProviderFromString(String provider) {
             switch(provider){
                 case "SUPERC":
                     return SUPER_C;
@@ -188,6 +188,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
             PublicationSet set = new PublicationSet();
             set.publication = pub;
             set.banner = provider.getBannerCode();
+            set.type = provider.getStoreType();
             set.items = this.getAllPublicationItems(provider, pub.id);
 
             MongoDatastore.getInstance().storeModel(PublicationSet.MONGO_DOCUMENT_NAME, set);

@@ -25,12 +25,16 @@ public class PublicationSet implements MappableTo<Document> {
     @SerializedName("banner")
     public String banner;
 
+    @SerializedName("type")
+    public String type;
+
     @Override
     public Document mapToBusinessModel(AbstractProvider p) {
         Document document = new Document();
 
         document.put("publication", this.publication.mapToBusinessModel(null));
         document.put("banner", this.banner);
+        document.put("type", this.type);
         document.put("items", this.items
                 .stream()
                 .map(x -> x.mapToBusinessModel(null))
