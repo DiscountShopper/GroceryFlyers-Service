@@ -17,12 +17,13 @@ public abstract class EyFlyerProvider extends AbstractProvider {
         }
 
         List<String> results = new LinkedList<>();
-        for(String k :  Jsoup.parse(keywords).text().split(" "))
+        for(String k :  Jsoup.parse(keywords).text().toLowerCase().split(" "))
         {
-            if(k.length() > 2 && title.toLowerCase().contains(k.toLowerCase())) {
+            if(k.length() > 3 && title.toLowerCase().contains(k) && !results.contains(k)) {
                 results.add(k);
             }
         }
+
 
         return results.toArray(new String[results.size()]);
     }
