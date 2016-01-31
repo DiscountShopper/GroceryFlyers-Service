@@ -11,6 +11,9 @@ import java.util.List;
  * Created by jeremiep on 2016-01-30.
  */
 public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
+    @Key("Id")
+    private String id;
+
     @Key("ProductTitle")
     private String title;
 
@@ -65,6 +68,7 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     @Override
     public PublicationItem mapToBusinessModel(AbstractProvider p) {
         PublicationItem r = new PublicationItem();
+        r.id = this.id;
         r.title_fr = p.getProductTitleFrench(this.title);
         r.title_en = p.getProductTitleEnglish(this.title);
 

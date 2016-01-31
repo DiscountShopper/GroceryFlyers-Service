@@ -12,6 +12,9 @@ import java.util.List;
  * Created by jeremiep on 2016-01-30.
  */
 public class PublicationItem implements MappableTo<Document> {
+    @SerializedName("id")
+    public String id;
+
     @SerializedName("title_fr")
     public String title_fr;
 
@@ -58,6 +61,7 @@ public class PublicationItem implements MappableTo<Document> {
     public Document mapToBusinessModel(AbstractProvider p) {
         Document document = new Document();
 
+        document.put("identifier", this.id);
         document.put("title_fr", this.title_fr);
         document.put("title_en", this.title_en);
         document.put("description", this.description);
