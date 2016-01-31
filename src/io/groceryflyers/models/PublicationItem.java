@@ -77,7 +77,7 @@ public class PublicationItem implements MappableTo<Document> {
 
     @Override
     public int hashCode() {
-        return this.identifier.hashCode();
+        return this.title_fr.hashCode();
     }
 
     @Override
