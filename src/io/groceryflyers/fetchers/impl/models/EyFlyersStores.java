@@ -68,6 +68,7 @@ public class EyFlyersStores implements MappableTo<Store> {
         s.distance = this.distance;
         s.longitude = this.longitude;
         s.latitude = this.latitude;
+        s.phone = this.phone;
 
         return s;
     }
