@@ -26,6 +26,7 @@ public class MainProgram {
     private final static int PORT = 1337;
     private final static Pattern POSTAL_CODE_PATTERN = Pattern.compile("[a-zA-Z][0-9][a-zA-Z][0-9][a-zA-Z][0-9]");
     private final static Pattern GUID_CODE_PATTERN = Pattern.compile("^[0-9a-z]{8}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{12}$");
+    private final static Logger LOGGER = Logger.getLogger(MainProgram.class);
 
     public static void main(String[] args) {
         MongoDatastore.getInstance(); //NOTE(Olivier): Little hack to initialize mongo connnection on server start cuz singleton... crappy I know...
@@ -140,12 +141,15 @@ public class MainProgram {
         *
         */
 
-        post("/api/recommended/products/:postalCode", (req, res) -> {
+        post("/api/recommended/products/:postalCode", "application/json", (req, res) -> {
             enforceProviderType(req);
             enforcePostalCode(req);
 
+            LOGGER.warn("Got into recommended request");
+
             Map jsonObject = (Map) new Gson().fromJson(req.body(), Object.class);
             List<String> fields = (List<String>)jsonObject.get("key_words");
+
 
             return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getRelatedProducts(fields.toArray(new String[fields.size()]), req.params(":postalCode"));
         }, new JsonTransformer());
@@ -156,7 +160,10 @@ public class MainProgram {
         *
         */
 
-        post("/api/pdf", (req, res) -> {
+        post("/api/pdf", "application/json", (req, res) -> {
+
+            LOGGER.warn("Got into pdf request");
+
             EyFlyerPdfMergeRequest itemsRequested = new Gson().fromJson(req.body(), EyFlyerPdfMergeRequest.class);
             return new Document("url", new EyFlyerFetcher(null).downloadMergeAndUploadAllPDFForPublications(itemsRequested.products));
         }, new JsonTransformer());
