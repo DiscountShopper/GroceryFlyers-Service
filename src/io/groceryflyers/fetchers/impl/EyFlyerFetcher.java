@@ -163,9 +163,9 @@ public class EyFlyerFetcher extends AbstractFetcher {
         for(Publication pub : this.getAllPublicationByStore(provider, sguid)) {
             Optional<Document> existingPub = MongoDatastore.getInstance().findPublicationIfAvailable(pub.id);
             if(existingPub.isPresent()) {
-                LOG.info("Using caching for " + sguid);
                 PublicationSet existingSet = new GsonBuilder().create().fromJson(existingPub.get().toJson(), PublicationSet.class);
                 pset.add(existingSet);
+                LOG.debug("Cached request " + existingSet.publication.id);
                 continue;
             }
 
@@ -199,17 +199,24 @@ public class EyFlyerFetcher extends AbstractFetcher {
         }
     }
 
-    /*public List<PublicationSet> getAllPublicationSetsForAllStores(String postcalCode) {
+    public List<PublicationSet> getAllPublicationSetsForAllStores(String postalCode) {
         List<PublicationSet> sets = new LinkedList<PublicationSet>();
-        for(EyFlyersProviders provider : EyFlyersProviders.values()) {
-
+        for(EyFlyersProviders p : EyFlyersProviders.values()) {
+            List<Store> nearbyStores = this.getStoreNearby(p, postalCode);
+            if(nearbyStores.size() > 0) {
+                for(PublicationSet set : this.getAllPublicationSetsByStore(p, nearbyStores.get(0).guid)) {
+                    sets.add(set);
+                }
+            }
         }
-    }*/
+
+        return sets;
+    }
 
     public static void main(String[] args) {
         EyFlyerFetcher fetcher = new EyFlyerFetcher();
 
-        List<Category> items = fetcher.getAllCategoriesByPublication(EyFlyersProviders.SUPER_C, "232b2f18-5c44-4be2-8a51-2002f6a96856");
+        List<PublicationSet> items = fetcher.getAllPublicationSetsForAllStores("h1x2t9");
         System.out.println(items.size());
     }
 }
