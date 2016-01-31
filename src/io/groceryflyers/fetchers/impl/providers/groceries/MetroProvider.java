@@ -33,8 +33,4 @@ public class MetroProvider extends EyFlyerProvider {
         }
     }
 
-    @Override
-    public String[] getKeywords(String keywords) {
-        return keywords == null ? new String[] {} : Jsoup.parse(keywords).text().split(" ");
-    }
 }

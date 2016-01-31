@@ -23,8 +23,4 @@ public class LoblawsProvider extends EyFlyerProvider {
         return "";
     }
 
-    @Override
-    public String[] getKeywords(String keywords) {
-        return keywords == null ? new String[] {} : Jsoup.parse(keywords).text().split(" ");
-    }
 }
