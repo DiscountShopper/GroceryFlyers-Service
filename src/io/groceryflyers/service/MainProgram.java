@@ -2,6 +2,7 @@ package io.groceryflyers.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 import io.groceryflyers.datastore.MongoDatastore;
 import io.groceryflyers.fetchers.impl.EyFlyerFetcher;
 import io.groceryflyers.fetchers.impl.models.EyFlyerPdfMergeRequest;
@@ -11,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.bson.Document;
 import spark.Request;
 
+import javax.annotation.Generated;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -147,11 +149,11 @@ public class MainProgram {
 
             LOGGER.warn("Got into recommended request");
 
-            Map jsonObject = (Map) new Gson().fromJson(req.body(), Object.class);
-            List<String> fields = (List<String>)jsonObject.get("key_words");
+            UselessStaticClassForJsonDeserialize jsonObject = new Gson().fromJson(req.body(), UselessStaticClassForJsonDeserialize.class);
+            String[] fields = jsonObject.key_words;
 
 
-            return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getRelatedProducts(fields.toArray(new String[fields.size()]), req.params(":postalCode"));
+            return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getRelatedProducts(fields, req.params(":postalCode"));
         }, new JsonTransformer());
 
         /*
@@ -198,5 +200,10 @@ public class MainProgram {
         if(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")) == null){
             halt(400, "Invalid parameters");
         }
+    }
+
+    private static class UselessStaticClassForJsonDeserialize {
+        @SerializedName("key_words")
+        public String[] key_words;
     }
 }

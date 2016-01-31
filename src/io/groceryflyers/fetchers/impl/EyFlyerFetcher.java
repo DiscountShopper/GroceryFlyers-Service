@@ -55,8 +55,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
         UNIPRIX("http://eflyer.metro.ca/UNIP/UNIP", "UNIPRIX", EyFlyersFetcherTypes.DRUGSTORES, new UniPrixProvider()),
         PROXIM("http://eflyer.metro.ca/PXM/PXM", "PROXIM", EyFlyersFetcherTypes.DRUGSTORES, new ProximProvider()),
         PHARMAPRIX("http://eflyer.metro.ca/PHX/PHX", "PHARMAPRIX",EyFlyersFetcherTypes.DRUGSTORES, new PharmaPrixProvider()),
-        SHOPPERS_DRUG_MART("http://eflyer.metro.ca/SDM/SDM", "SHOPPERS_DRUG_MART",EyFlyersFetcherTypes.DRUGSTORES, new ShoppersDrugMartProvider())
-        ;
+        SHOPPERS_DRUG_MART("http://eflyer.metro.ca/SDM/SDM", "SHOPPERS_DRUG_MART",EyFlyersFetcherTypes.DRUGSTORES, new ShoppersDrugMartProvider());
 
 
         private String base_url;
