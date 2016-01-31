@@ -27,20 +27,38 @@ import java.util.stream.Collectors;
  */
 public class EyFlyerFetcher extends AbstractFetcher {
     private static Logger LOG = Logger.getLogger(EyFlyerFetcher.class);
+    public enum EyFlyersFetcherTypes {
+        GROCERIES("GROCERIES"),
+        DRUGSTORES("DRUGSTORES");
+
+        private String code;
+        private EyFlyersFetcherTypes(String code) {
+            this.code = code;
+        }
+
+        public String getCode() { return this.code; }
+
+        public static EyFlyersFetcherTypes fromString(String str) {
+            if(str.equalsIgnoreCase("GROCERIES")) { return GROCERIES; }
+            else if(str.equalsIgnoreCase("DRUGSTORES")) { return DRUGSTORES; }
+
+            return null;
+        }
+    }
     public enum EyFlyersProviders {
-        SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC", "SUPERC", "GROCERIES", new SuperCProvider()),
-        MAXI("http://eflyer.metro.ca/MAXI/MAXI", "MAXI", "GROCERIES", new MaxiProvider()),
-        IGA("http://eflyer.metro.ca/IGA/IGA", "IGA", "GROCERIES", new IGAProvider()),
-        METRO("http://eflyer.metro.ca/MTR/MTR", "METRO", "GROCERIES", new MetroProvider()),
-        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", "LOBLAWS", "GROCERIES", new LoblawsProvider()),
-        PROVIGO("http://eflyer.metro.ca/PROV/PROV", "PROVIGO", "GROCERIES", new LoblawsProvider());
+        SUPER_C("http://eflyer.metro.ca/SUPRC/SUPRC", "SUPERC", EyFlyersFetcherTypes.GROCERIES, new SuperCProvider()),
+        MAXI("http://eflyer.metro.ca/MAXI/MAXI", "MAXI", EyFlyersFetcherTypes.GROCERIES, new MaxiProvider()),
+        IGA("http://eflyer.metro.ca/IGA/IGA", "IGA", EyFlyersFetcherTypes.GROCERIES, new IGAProvider()),
+        METRO("http://eflyer.metro.ca/MTR/MTR", "METRO", EyFlyersFetcherTypes.GROCERIES, new MetroProvider()),
+        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", "LOBLAWS", EyFlyersFetcherTypes.GROCERIES, new LoblawsProvider()),
+        PROVIGO("http://eflyer.metro.ca/PROV/PROV", "PROVIGO", EyFlyersFetcherTypes.GROCERIES, new LoblawsProvider());
 
 
         private String base_url;
         private String code;
-        private String type;
+        private EyFlyersFetcherTypes type;
         private EyFlyerProvider provider;
-        EyFlyersProviders(String base_url, String code, String type, EyFlyerProvider provider) {
+        EyFlyersProviders(String base_url, String code, EyFlyersFetcherTypes type, EyFlyerProvider provider) {
             this.base_url = base_url;
             this.code = code;
             this.type = type;
@@ -49,7 +67,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
 
         public String getBannerCode() { return this.code; }
 
-        public String getStoreType() { return this.type; }
+        public EyFlyersFetcherTypes getStoreType() { return this.type; }
 
         public String getBaseUrl() {
             return this.base_url;
@@ -98,10 +116,27 @@ public class EyFlyerFetcher extends AbstractFetcher {
             }
         }
 
+        public static EyFlyersProviders[] getProvidersByType(EyFlyersFetcherTypes type) {
+            switch(type) {
+                case GROCERIES:
+                    return new EyFlyersProviders[] { SUPER_C, MAXI, IGA, METRO, LOBLAWS, PROVIGO };
+                case DRUGSTORES:
+                    return new EyFlyersProviders[] {};
+            }
+
+            return null;
+        }
+
         public static boolean isProviderTypeSupported(String type) {
             return type.equalsIgnoreCase("GROCERIES") || type.equalsIgnoreCase("DRUGSTORES");
         }
     };
+
+    private EyFlyersFetcherTypes currentType;
+
+    public EyFlyerFetcher(EyFlyersFetcherTypes type) {
+        this.currentType = type;
+    }
 
     @Override
     public List<Store> getStoreNearby(EyFlyersProviders provider, String postalCode) {
@@ -127,7 +162,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
     public List<Store> getAllStoreNearby(String postalCode) {
         List<Store> allStores = new ArrayList<>();
 
-        for(EyFlyersProviders provider: EyFlyersProviders.values()){
+        for(EyFlyersProviders provider: EyFlyersProviders.getProvidersByType(this.currentType)){
             allStores.addAll(getStoreNearby(provider, postalCode));
         }
 
@@ -188,7 +223,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
             PublicationSet set = new PublicationSet();
             set.publication = pub;
             set.banner = provider.getBannerCode();
-            set.type = provider.getStoreType();
+            set.type = provider.getStoreType().getCode();
             set.items = this.getAllPublicationItems(provider, pub.id);
 
             MongoDatastore.getInstance().storeModel(PublicationSet.MONGO_DOCUMENT_NAME, set);
@@ -219,7 +254,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
 
     public List<PublicationSet> getAllPublicationSetsForAllStores(String postalCode) {
         List<PublicationSet> sets = new LinkedList<PublicationSet>();
-        for(EyFlyersProviders p : EyFlyersProviders.values()) {
+        for(EyFlyersProviders p : EyFlyersProviders.getProvidersByType(this.currentType)) {
             List<Store> nearbyStores = this.getStoreNearby(p, postalCode);
             if(nearbyStores.size() > 0) {
                 for(PublicationSet set : this.getAllPublicationSetsByStore(p, nearbyStores.get(0).guid)) {
@@ -268,7 +303,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
     }
 
     public static void main(String[] args) {
-        EyFlyerFetcher fetcher = new EyFlyerFetcher();
+        EyFlyerFetcher fetcher = new EyFlyerFetcher(EyFlyersFetcherTypes.GROCERIES);
 
         //ArrayList<String> strs = new ArrayList<>();
         //strs.add("meat");
