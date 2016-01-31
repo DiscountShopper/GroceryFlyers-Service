@@ -108,7 +108,7 @@ public class MainProgram {
                             request.params("pguid"));
         }, new JsonTransformer());
 
-        before("/api/products/:publicationId:/productId", (request, response) -> {
+        before("/api/products/:publicationId/:productId", (request, response) -> {
             boolean validParameters = true;
 
             validParameters = GUID_CODE_PATTERN.matcher(request.params(":productId")).matches();
@@ -118,7 +118,7 @@ public class MainProgram {
                 halt(400, "Invalid parameters");
             }
         });
-        get("/api/products/:publicationId:/productId", (request, response) -> {
+        get("/api/products/:publicationId/:productId", (request, response) -> {
             Optional<Document> product = MongoDatastore.getInstance().findProduct(request.params(":publicationId"), request.params(":productId"));
             return product.orElseGet(Document::new);
         }, new JsonTransformer());

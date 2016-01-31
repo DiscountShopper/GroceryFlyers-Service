@@ -7,12 +7,13 @@ import com.mongodb.client.MongoDatabase;
 import io.groceryflyers.models.PublicationSet;
 import io.groceryflyers.models.utils.MappableTo;
 import org.bson.Document;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.*;
-import static com.mongodb.client.model.Projections.*;
 
 /**
  * Created by olivier on 2016-01-30.
@@ -59,10 +60,9 @@ public class MongoDatastore {
 
     public Optional<Document> findProduct(String publicationId, String productId){
         MongoCollection<Document> collection = database.getCollection(PublicationSet.MONGO_DOCUMENT_NAME);
-        Document elemMatchQuery = new Document("$elemMatch", new Document("identifier", productId))
-                .append("publication.identifier", publicationId);
-        Document result = collection.find(elemMatchQuery).first();
+        Document result = collection
+                .find(new Document("publication.identifier", publicationId)).projection(elemMatch("items", new Document("identifier", productId))).first();
 
-        return result == null ? Optional.empty() : Optional.of(result);
+        return result == null ? Optional.empty() : Optional.of(((ArrayList<Document>)result.get("items")).get(0));
     }
 }
