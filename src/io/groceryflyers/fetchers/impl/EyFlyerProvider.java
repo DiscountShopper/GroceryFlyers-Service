@@ -27,4 +27,13 @@ public abstract class EyFlyerProvider extends AbstractProvider {
 
         return results.toArray(new String[results.size()]);
     }
+
+    @Override
+    public String[] getSearchKeywords(String title, String keywords) {
+        if(keywords == null) {
+            return new String[] {};
+        }
+
+        return keywords.toLowerCase().split(" ");
+    }
 }

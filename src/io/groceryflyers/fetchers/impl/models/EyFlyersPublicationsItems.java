@@ -100,6 +100,7 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
         r.price = this.price;
         r.price_unit = this.priceUnit;
         r.key_words = p.getKeywords(this.title, this.key_words);
+        r.search_key_words = p.getSearchKeywords(this.title, this.key_words);
         r.banner_code = this.banner_code;
 
         r.effective_start_date = this.effective_start_date;

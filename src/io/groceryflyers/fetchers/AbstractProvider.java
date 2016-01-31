@@ -9,4 +9,5 @@ public abstract class AbstractProvider {
     public abstract String getProductTitleFrench(String title);
     public abstract String getProductTitleEnglish(String title);
     public abstract String[] getKeywords(String title, String keywords);
+    public abstract String[] getSearchKeywords(String title, String keywords);
 }
