@@ -332,13 +332,15 @@ public class EyFlyerFetcher extends AbstractFetcher {
         return result;
     }
 
-    public File downloadPDFForPublicationItem(EyFlyersProviders provider, EyFlyersProductItemRequest re) {
+    public File downloadPDFForPublicationItem(EyFlyersProductItemRequest re) {
         PublicationItem pubItem = new GsonBuilder().create().fromJson(
                 MongoDatastore.getInstance().findProduct(re.pubguid, re.pguid).get().toJson(),
                 PublicationItem.class);
         try {
             HttpRequest req = this.getDefaultHttpFactory().buildGetRequest(
-                    new GenericUrl(provider.getPdfPagesUrl(re.pubguid, re.sguid, pubItem.page_number))
+                    new GenericUrl(EyFlyersProviders
+                            .getProviderFromString(re.banner_code)
+                            .getPdfPagesUrl(re.pubguid, re.sguid, pubItem.page_number))
             );
 
             File downloadPdf = new File("./tmp/" + re.pguid.concat(".pdf"));
@@ -352,12 +354,12 @@ public class EyFlyerFetcher extends AbstractFetcher {
         }
     }
 
-    public String downloadMergeAndUploadAllPDFForPublications(EyFlyersProviders providers, List<EyFlyersProductItemRequest> requests) {
+    public String downloadMergeAndUploadAllPDFForPublications(List<EyFlyersProductItemRequest> requests) {
         List<File> downloadedPdfs = new LinkedList<File>();
         PDFMergerUtility merge = new PDFMergerUtility();
 
         for(EyFlyersProductItemRequest req : requests) {
-            File f = this.downloadPDFForPublicationItem(providers, req);
+            File f = this.downloadPDFForPublicationItem(req);
             downloadedPdfs.add(f);
 
             try {
@@ -389,11 +391,11 @@ public class EyFlyerFetcher extends AbstractFetcher {
         List<PublicationSet> items = fetcher.getAllPublicationSetsByStore(EyFlyersProviders.MAXI, "3c4099e9-983e-4eb6-beee-3b5b90432e90");
         System.out.println(items.size());
         LinkedList<EyFlyersProductItemRequest> reqs = new LinkedList<>();
-        reqs.add(new EyFlyersProductItemRequest("1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "3a1b3d6d-cc0e-4c33-b6f9-651e1e65e86b"));
-        reqs.add(new EyFlyersProductItemRequest("1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "c47b5f79-b872-4bbc-93e8-fc3a31e3d2cb"));
-        reqs.add(new EyFlyersProductItemRequest("1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "2d2c0f4e-3656-4e36-baf4-c89c5e8d2faa"));
+        reqs.add(new EyFlyersProductItemRequest("MAXI", "1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "3a1b3d6d-cc0e-4c33-b6f9-651e1e65e86b"));
+        reqs.add(new EyFlyersProductItemRequest("MAXI", "1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "c47b5f79-b872-4bbc-93e8-fc3a31e3d2cb"));
+        reqs.add(new EyFlyersProductItemRequest("MAXI", "1357247e-91e4-4995-8f26-c18d027fbcfd", "3c4099e9-983e-4eb6-beee-3b5b90432e90", "2d2c0f4e-3656-4e36-baf4-c89c5e8d2faa"));
 
-        String mergedPdf = fetcher.downloadMergeAndUploadAllPDFForPublications(EyFlyersProviders.MAXI, reqs);
+        String mergedPdf = fetcher.downloadMergeAndUploadAllPDFForPublications(reqs);
         System.out.print(mergedPdf);
     }
 }

@@ -15,7 +15,11 @@ public class EyFlyersProductItemRequest {
     @SerializedName("pguid")
     public String pguid;
 
-    public EyFlyersProductItemRequest(String pubguid, String sguid, String pguid) {
+    @SerializedName("banner_code")
+    public String banner_code;
+
+    public EyFlyersProductItemRequest(String banner_code, String pubguid, String sguid, String pguid) {
+        this.banner_code = banner_code;
         this.pubguid = pubguid;
         this.sguid = sguid;
         this.pguid = pguid;
