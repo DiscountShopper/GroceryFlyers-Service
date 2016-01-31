@@ -157,10 +157,9 @@ public class MainProgram {
         */
 
         post("/api/pdf", (req, res) -> {
-
             EyFlyerPdfMergeRequest itemsRequested = new Gson().fromJson(req.body(), EyFlyerPdfMergeRequest.class);
-            return "";
-        });
+            return new Document("url", new EyFlyerFetcher(null).downloadMergeAndUploadAllPDFForPublications(itemsRequested.products));
+        }, new JsonTransformer());
 
     }
 
