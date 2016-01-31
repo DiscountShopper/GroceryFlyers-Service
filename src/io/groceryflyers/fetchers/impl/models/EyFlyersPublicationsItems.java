@@ -59,6 +59,9 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     @Key("Keywords")
     private String keywords;
 
+    @Key("BannerCode")
+    private String banner_code;
+
     @Override
     public PublicationItem mapToBusinessModel(AbstractProvider p) {
         PublicationItem r = new PublicationItem();
@@ -81,6 +84,7 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
         r.price = this.price;
         r.price_unit = this.priceUnit;
         r.keywords = p.getKeywords(this.keywords);
+        r.banner_code = this.banner_code;
 
         return r;
     }

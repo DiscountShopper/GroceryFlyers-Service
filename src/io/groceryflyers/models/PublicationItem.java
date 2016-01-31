@@ -51,6 +51,9 @@ public class PublicationItem implements MappableTo<Document> {
     @SerializedName("keywords")
     public String[] keywords;
 
+    @SerializedName("banner_code")
+    public String banner_code;
+
     @Override
     public Document mapToBusinessModel(AbstractProvider p) {
         Document document = new Document();
@@ -68,6 +71,7 @@ public class PublicationItem implements MappableTo<Document> {
         document.put("price", this.price);
         document.put("price_unit", this.price_unit);
         document.put("key_words", Arrays.asList(this.keywords));
+        document.put("banner_code", this.banner_code);
 
         return document;
     }
