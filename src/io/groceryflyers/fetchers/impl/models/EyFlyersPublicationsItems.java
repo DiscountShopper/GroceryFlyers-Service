@@ -57,7 +57,7 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
     private String priceUnit;
 
     @Key("Keywords")
-    private String keywords;
+    private String key_words;
 
     @Key("BannerCode")
     private String banner_code;
@@ -90,7 +90,7 @@ public class EyFlyersPublicationsItems implements MappableTo<PublicationItem> {
 
         r.price = this.price;
         r.price_unit = this.priceUnit;
-        r.keywords = p.getKeywords(this.keywords);
+        r.key_words = p.getKeywords(this.key_words);
         r.banner_code = this.banner_code;
 
         r.effective_start_date = this.effective_start_date;

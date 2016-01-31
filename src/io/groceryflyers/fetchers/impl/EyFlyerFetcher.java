@@ -32,7 +32,9 @@ public class EyFlyerFetcher extends AbstractFetcher {
         MAXI("http://eflyer.metro.ca/MAXI/MAXI", "MAXI", new MaxiProvider()),
         IGA("http://eflyer.metro.ca/IGA/IGA", "IGA", new IGAProvider()),
         METRO("http://eflyer.metro.ca/MTR/MTR", "METRO", new MetroProvider()),
-        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", "LOBLAWS", new LoblawsProvider());
+        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", "LOBLAWS", new LoblawsProvider()),
+        PROVIGO("http://eflyer.metro.ca/PROV/PROV", "PROVIGO", new LoblawsProvider());
+
 
         private String base_url;
         private String code;
@@ -85,6 +87,8 @@ public class EyFlyerFetcher extends AbstractFetcher {
                     return METRO;
                 case "LOBLAWS":
                     return LOBLAWS;
+                case "PROVIGO":
+                    return PROVIGO;
                 default:
                     return null;
             }
@@ -225,7 +229,7 @@ public class EyFlyerFetcher extends AbstractFetcher {
         for(PublicationSet set : sets) {
             for(PublicationItem item : set.items) {
                 Set<String> s1 = new HashSet<String>(Arrays.asList(keywords));
-                Set<String> s2 = new HashSet<String>(Arrays.asList(item.keywords));
+                Set<String> s2 = new HashSet<String>(Arrays.asList(item.key_words));
 
                 s1.retainAll(s2);
 

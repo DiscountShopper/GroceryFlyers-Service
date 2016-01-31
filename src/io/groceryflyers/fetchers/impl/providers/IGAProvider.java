@@ -21,6 +21,6 @@ public class IGAProvider extends EyFlyerProvider {
 
     @Override
     public String[] getKeywords(String keywords) {
-        return Jsoup.parse(keywords).text().split(" ");
+        return keywords == null ? new String[] {} : Jsoup.parse(keywords).text().split(" ");
     }
 }

@@ -54,8 +54,8 @@ public class PublicationItem implements MappableTo<Document> {
     @SerializedName("price_unit")
     public String price_unit;
 
-    @SerializedName("keywords")
-    public String[] keywords;
+    @SerializedName("key_words")
+    public String[] key_words;
 
     @SerializedName("banner_code")
     public String banner_code;
@@ -84,7 +84,7 @@ public class PublicationItem implements MappableTo<Document> {
         document.put("imageThumb", this.imageThumb);
         document.put("price", this.price);
         document.put("price_unit", this.price_unit);
-        document.put("key_words", Arrays.asList(this.keywords));
+        document.put("key_words", Arrays.asList(this.key_words));
         document.put("banner_code", this.banner_code);
         document.put("effective_start_date", this.effective_start_date);
         document.put("effective_end_date", this.effective_end_date);
