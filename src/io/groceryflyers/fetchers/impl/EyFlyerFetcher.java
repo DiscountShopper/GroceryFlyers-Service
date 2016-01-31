@@ -47,13 +47,15 @@ public class EyFlyerFetcher extends AbstractFetcher {
         MAXI("http://eflyer.metro.ca/MAXI/MAXI", "MAXI", EyFlyersFetcherTypes.GROCERIES, new MaxiProvider()),
         IGA("http://eflyer.metro.ca/IGA/IGA", "IGA", EyFlyersFetcherTypes.GROCERIES, new IGAProvider()),
         METRO("http://eflyer.metro.ca/MTR/MTR", "METRO", EyFlyersFetcherTypes.GROCERIES, new MetroProvider()),
-        LOBLAWS("http://eflyer.metro.ca/LOB/LOB", "LOBLAWS", EyFlyersFetcherTypes.GROCERIES, new LoblawsProvider()),
+        LOBLAWS("http://eflyer.metro.ca/LOBPQ/LOBPQ", "LOBLAWS", EyFlyersFetcherTypes.GROCERIES, new LoblawsProvider()),
         PROVIGO("http://eflyer.metro.ca/PROV/PROV", "PROVIGO", EyFlyersFetcherTypes.GROCERIES, new LoblawsProvider()),
+        M_ET_M("http://eflyer.metro.ca/LAM/LAM", "M_ET_M", EyFlyersFetcherTypes.GROCERIES, new MetMProvider()),
         BRUNET("http://eflyer.metro.ca/BRNT/BRNT", "BRUNET", EyFlyersFetcherTypes.DRUGSTORES, new BrunetProvider()),
         JEAN_COUTU("http://eflyer.metro.ca/JCP/JCP", "JEAN_COUTU", EyFlyersFetcherTypes.DRUGSTORES, new JeanCoutuProvider()),
         UNIPRIX("http://eflyer.metro.ca/UNIP/UNIP", "UNIPRIX", EyFlyersFetcherTypes.DRUGSTORES, new UniPrixProvider()),
         PROXIM("http://eflyer.metro.ca/PXM/PXM", "PROXIM", EyFlyersFetcherTypes.DRUGSTORES, new ProximProvider()),
-        PHARMAPRIX("http://eflyer.metro.ca/PHX/PHX", "PHARMAPRIX",EyFlyersFetcherTypes.DRUGSTORES, new PharmaPrixProvider())
+        PHARMAPRIX("http://eflyer.metro.ca/PHX/PHX", "PHARMAPRIX",EyFlyersFetcherTypes.DRUGSTORES, new PharmaPrixProvider()),
+        SHOPPERS_DRUG_MART("http://eflyer.metro.ca/SDM/SDM", "SHOPPERS_DRUG_MART",EyFlyersFetcherTypes.DRUGSTORES, new ShoppersDrugMartProvider())
         ;
 
 
@@ -128,6 +130,8 @@ public class EyFlyerFetcher extends AbstractFetcher {
                     return LOBLAWS;
                 case "PROVIGO":
                     return PROVIGO;
+                case "M_ET_M":
+                    return M_ET_M;
                 case "BRUNET":
                     return BRUNET;
                 case "JEAN_COUTU":
@@ -138,6 +142,8 @@ public class EyFlyerFetcher extends AbstractFetcher {
                     return PROXIM;
                 case "PHARMAPRIX":
                     return PHARMAPRIX;
+                case "SHOPPERS_DRUG_MART":
+                    return SHOPPERS_DRUG_MART;
                 default:
                     return null;
             }
@@ -146,9 +152,9 @@ public class EyFlyerFetcher extends AbstractFetcher {
         public static EyFlyersProviders[] getProvidersByType(EyFlyersFetcherTypes type) {
             switch(type) {
                 case GROCERIES:
-                    return new EyFlyersProviders[] { SUPER_C, MAXI, IGA, METRO, LOBLAWS, PROVIGO };
+                    return new EyFlyersProviders[] { SUPER_C, MAXI, IGA, METRO, LOBLAWS, PROVIGO, M_ET_M };
                 case DRUGSTORES:
-                    return new EyFlyersProviders[] { BRUNET, JEAN_COUTU, UNIPRIX, PROXIM, PHARMAPRIX };
+                    return new EyFlyersProviders[] { BRUNET, JEAN_COUTU, UNIPRIX, PROXIM, PHARMAPRIX, SHOPPERS_DRUG_MART };
             }
 
             return null;
