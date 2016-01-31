@@ -166,12 +166,12 @@ public class EyFlyerFetcher extends AbstractFetcher {
         LinkedList<PublicationSet> pset = new LinkedList<PublicationSet>();
         for(Publication pub : this.getAllPublicationByStore(provider, sguid)) {
             Optional<Document> existingPub = MongoDatastore.getInstance().findPublicationIfAvailable(pub.id);
-            /*if(existingPub.isPresent()) {
+            if(existingPub.isPresent()) {
                 PublicationSet existingSet = new GsonBuilder().create().fromJson(existingPub.get().toJson(), PublicationSet.class);
                 pset.add(existingSet);
                 LOG.debug("Cached request " + existingSet.publication.id);
                 continue;
-            }*/
+            }
 
             PublicationSet set = new PublicationSet();
             set.publication = pub;
@@ -218,23 +218,18 @@ public class EyFlyerFetcher extends AbstractFetcher {
         return sets;
     }
 
-    public List<PublicationItem> getRelatedProducts(List<String> keywords, String postalCode) {
+    public List<PublicationItem> getRelatedProducts(String[] keywords, String postalCode) {
         List<PublicationSet> sets = this.getAllPublicationSetsForAllStores(postalCode);
-        LinkedList<PublicationItem> result = new LinkedList<PublicationItem>();
+        LinkedList<PublicationItem> result = new LinkedList<>();
 
         for(PublicationSet set : sets) {
             for(PublicationItem item : set.items) {
-                List<String> original = keywords;
+                Set<String> s1 = new HashSet<String>(Arrays.asList(keywords));
+                Set<String> s2 = new HashSet<String>(Arrays.asList(item.keywords));
 
-                List<String> add = new LinkedList<String>(Arrays.asList(item.keywords));
-                add.removeAll(original); // selected - original
-                List<String> remove = new LinkedList<String>(original);
-                remove.removeAll(Arrays.asList(item.keywords));
+                s1.retainAll(s2);
 
-                original.addAll(add);
-                original.removeAll(remove); // original is the intersection
-
-                if(original.size() >= 2) {
+                if(s1.size() >= 1) {
                     result.add(item);
                 }
             }
@@ -262,7 +257,10 @@ public class EyFlyerFetcher extends AbstractFetcher {
     public static void main(String[] args) {
         EyFlyerFetcher fetcher = new EyFlyerFetcher();
 
-        List<Category> items = fetcher.getAllCategories("h1x2t9");
+        //ArrayList<String> strs = new ArrayList<>();
+        //strs.add("meat");
+        //strs.add("steak");
+        List<PublicationItem> items = fetcher.getRelatedProducts(new String[] { "biscuits", "granola" }, "h1x2t9");
         System.out.println(items.size());
     }
 }
