@@ -30,6 +30,11 @@ public class MainProgram {
     private final static Pattern GUID_CODE_PATTERN = Pattern.compile("^[0-9a-z]{8}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{4}\\-[0-9a-z]{12}$");
     private final static Logger LOGGER = Logger.getLogger(MainProgram.class);
 
+    private final static String POSTAL_CODE = ":postalCode";
+    private final static String BANNER_CODE = ":bannerCoder";
+    private final static String PUBLICATION_ID = ":publicationId";
+    private final static String PRODUCT_ID = ":productId";
+
     public static void main(String[] args) {
         MongoDatastore.getInstance(); //NOTE(Olivier): Little hack to initialize mongo connnection on server start cuz singleton... crappy I know...
 
@@ -41,10 +46,10 @@ public class MainProgram {
         *
         */
 
-        get("/api/stores/:bannerCode/:postalCode", (req, res) ->  {
+        get(String.format("/api/stores/%s/%s", BANNER_CODE, POSTAL_CODE), (req, res) ->  {
             enforceProviderType(req);
             enforceBannerCode(req);
-            enforcePostalCode(req);
+            enforceParamFormat(req, POSTAL_CODE_PATTERN, POSTAL_CODE);
 
             return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type")))
                     .getStoreNearby(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(req.params(":bannerCode")), req.params(":postalCode"));
@@ -56,9 +61,9 @@ public class MainProgram {
         *
         */
 
-        get("/api/stores/:postalCode", (req, res) ->  {
+        get(String.format("/api/stores/%s", POSTAL_CODE), (req, res) ->  {
             enforceProviderType(req);
-            enforcePostalCode(req);
+            enforceParamFormat(req, POSTAL_CODE_PATTERN, POSTAL_CODE);
 
             return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getAllStoreNearby(req.params(":postalCode"));
         }, new JsonTransformer());
@@ -69,10 +74,10 @@ public class MainProgram {
         *
         */
 
-        get("/api/publications/:bannerCode/:publicationId", (req, res) ->  {
+        get(String.format("/api/publications/%s/%s", BANNER_CODE, PUBLICATION_ID), (req, res) ->  {
             enforceProviderType(req);
             enforceBannerCode(req);
-            enforcePublicationId(req);
+            enforceParamFormat(req, GUID_CODE_PATTERN, PUBLICATION_ID);
 
             return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type")))
                     .getAllPublicationSetsByStore(
@@ -86,9 +91,9 @@ public class MainProgram {
         *
         */
 
-        get("/api/categories/:productId", (req, res) ->  {
+        get(String.format("/api/categories/%s", PRODUCT_ID), (req, res) ->  {
             enforceProviderType(req);
-            enforceProductId(req);
+            enforceParamFormat(req, GUID_CODE_PATTERN, PRODUCT_ID);
 
             return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type")))
                     .getAllPublicationSetsByStore(
@@ -102,10 +107,10 @@ public class MainProgram {
         *
         */
 
-        get("/api/products/:publicationId/:productId", (req, res) -> {
+        get(String.format("/api/products/%s/%s", PUBLICATION_ID, PRODUCT_ID), (req, res) -> {
             enforceProviderType(req);
-            enforcePublicationId(req);
-            enforceProductId(req);
+            enforceParamFormat(req, GUID_CODE_PATTERN, PUBLICATION_ID);
+            enforceParamFormat(req, GUID_CODE_PATTERN, PRODUCT_ID);
 
             Optional<Document> product = MongoDatastore.getInstance().findProduct(req.params(":publicationId"), req.params(":productId"));
             return product.orElseGet(Document::new);
@@ -117,9 +122,9 @@ public class MainProgram {
         *
         */
 
-        get("/api/closest/publications/:postalCode", (req, res) -> {
+        get(String.format("/api/closest/publications/%s", POSTAL_CODE), (req, res) -> {
             enforceProviderType(req);
-            enforcePostalCode(req);
+            enforceParamFormat(req, POSTAL_CODE_PATTERN, POSTAL_CODE);
 
             return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getAllPublicationSetsForAllStores(req.params(":postalCode"));
         }, new JsonTransformer());
@@ -130,9 +135,9 @@ public class MainProgram {
         *
         */
 
-        get("/api/closest/categories/:postalCode", (req, res) -> {
+        get(String.format("/api/closest/categories/%s", POSTAL_CODE), (req, res) -> {
             enforceProviderType(req);
-            enforcePostalCode(req);
+            enforceParamFormat(req, POSTAL_CODE_PATTERN, POSTAL_CODE);
 
             return new EyFlyerFetcher(EyFlyerFetcher.EyFlyersFetcherTypes.fromString(req.queryParams("type"))).getAllCategories(req.params(":postalCode"));
         }, new JsonTransformer());
@@ -143,9 +148,9 @@ public class MainProgram {
         *
         */
 
-        post("/api/recommended/products/:postalCode", "application/json", (req, res) -> {
+        post(String.format("/api/recommended/products/%s", POSTAL_CODE), "application/json", (req, res) -> {
             enforceProviderType(req);
-            enforcePostalCode(req);
+            enforceParamFormat(req, POSTAL_CODE_PATTERN, POSTAL_CODE);
 
             LOGGER.warn("Got into recommended request");
 
@@ -172,32 +177,20 @@ public class MainProgram {
 
     }
 
+    private static void enforceParamFormat(Request request, Pattern format, String param){
+        if(!format.matcher(request.params(param)).matches()){
+            halt(400, String.format("Invalid parameter value: %s", param));
+        }
+    }
+
     private static void enforceProviderType(Request request){
         if(!EyFlyerFetcher.EyFlyersProviders.isProviderTypeSupported(request.queryParams("type"))){
             halt(400, "You must provide the api type");
         }
     }
 
-    private static void enforcePostalCode(Request request){
-        if(!POSTAL_CODE_PATTERN.matcher(request.params(":postalCode")).matches()){
-            halt(400, "Invalid parameters");
-        }
-    }
-
-    private static void enforcePublicationId(Request request){
-        if(!GUID_CODE_PATTERN.matcher(request.params(":publicationId")).matches()){
-            halt(400, "Invalid parameters");
-        }
-    }
-
-    private static void enforceProductId(Request request){
-        if(!GUID_CODE_PATTERN.matcher(request.params(":productId")).matches()){
-            halt(400, "Invalid parameters");
-        }
-    }
-
     private static void enforceBannerCode(Request request){
-        if(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(":bannerCode")) == null){
+        if(EyFlyerFetcher.EyFlyersProviders.getProviderFromString(request.params(BANNER_CODE)) == null){
             halt(400, "Invalid parameters");
         }
     }
