@@ -9,6 +9,4 @@ public enum BannerTypes {
     IGA,
     METRO,
     LOBLAWS;
-
-
 }

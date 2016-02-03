@@ -1,21 +1,14 @@
 package io.groceryflyers.service;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import io.groceryflyers.datastore.MongoDatastore;
-import io.groceryflyers.fetchers.impl.EyFlyerFetcher;
-import io.groceryflyers.fetchers.impl.models.EyFlyerPdfMergeRequest;
-import io.groceryflyers.fetchers.impl.models.EyFlyersProductItemRequest;
-import io.groceryflyers.fetchers.impl.models.EyFlyersPublicationsItems;
+import io.groceryflyers.fetchers.impl.transcontinental.json.EyFlyerFetcher;
+import io.groceryflyers.fetchers.impl.transcontinental.json.models.EyFlyerPdfMergeRequest;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import spark.Request;
 
-import javax.annotation.Generated;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 

@@ -1,7 +1,7 @@
 package io.groceryflyers.models;
 
 import com.google.gson.annotations.SerializedName;
-import io.groceryflyers.fetchers.AbstractProvider;
+import io.groceryflyers.fetchers.impl.transcontinental.json.TCProvider;
 import io.groceryflyers.models.utils.MappableTo;
 import org.bson.Document;
 
@@ -22,7 +22,7 @@ public class Publication implements MappableTo<Document> {
     public String thumbnail;
 
     @Override
-    public Document mapToBusinessModel(AbstractProvider p) {
+    public Document mapToBusinessModel(TCProvider p) {
 
         Document dbObject = new Document();
         dbObject.put("identifier", this.id);
